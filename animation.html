@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<title>Satz des Pythagoras — Animierter Beweis</title>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    margin: 0;
+    padding: 28px;
+    background: linear-gradient(180deg, #fbf8f1 0%, #f3eede 100%);
+    color: #1f1f1f;
+    min-height: 100vh;
+  }
+  h1 {
+    font-size: 30px;
+    margin: 0 0 6px;
+    color: #2c2418;
+    letter-spacing: -0.01em;
+  }
+  .subtitle {
+    color: #6a5d44;
+    margin: 0 0 22px;
+    font-size: 17px;
+    font-family: Georgia, serif;
+    font-style: italic;
+  }
+  .stage-wrap {
+    background: white;
+    border: 1px solid #e8e2d0;
+    border-radius: 14px;
+    padding: 18px;
+    box-shadow: 0 2px 10px rgba(60, 40, 10, 0.06);
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+  svg { width: 100%; height: auto; display: block; background: #fdfbf4; border-radius: 8px; }
+  .caption {
+    margin: 16px 4px 8px;
+    font-family: Georgia, serif;
+    font-size: 18px;
+    line-height: 1.5;
+    color: #2c2418;
+    min-height: 56px;
+  }
+  .caption b { color: #1a3848; }
+  .progress {
+    height: 6px;
+    background: #f0e8d0;
+    border-radius: 99px;
+    overflow: hidden;
+    margin: 10px 4px 14px;
+  }
+  .progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, #c4a05a 0%, #4a8a5c 100%);
+    width: 0%;
+    transition: width 0.1s linear;
+  }
+  .controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    align-items: center;
+    padding: 6px 4px 0;
+  }
+  button {
+    padding: 10px 18px;
+    border: 1px solid #d4ccb4;
+    background: white;
+    border-radius: 8px;
+    font-size: 15px;
+    font-weight: 600;
+    color: #2c2418;
+    cursor: pointer;
+    transition: all 0.15s;
+    font-family: inherit;
+  }
+  button:hover { background: #fbf6e6; border-color: #c4a05a; }
+  button.primary {
+    background: linear-gradient(180deg, #c4a05a 0%, #a8884a 100%);
+    color: white;
+    border-color: #8a6e3a;
+  }
+  button.primary:hover { filter: brightness(1.07); }
+  .speed {
+    display: flex; align-items: center; gap: 8px;
+    margin-left: auto;
+    font-size: 14px; color: #6a5d44;
+  }
+  .speed input { width: 120px; }
+  .inputs {
+    display: flex; gap: 14px; align-items: center;
+    margin: 14px 4px 4px;
+    font-size: 14px; color: #6a5d44;
+  }
+  .inputs input {
+    width: 70px;
+    padding: 6px 8px;
+    border: 1px solid #d4ccb4;
+    border-radius: 6px;
+    font-size: 15px;
+    font-family: inherit;
+  }
+  .nav {
+    text-align: right;
+    margin-bottom: 8px;
+    font-size: 14px;
+  }
+  .nav a {
+    color: #8a6e3a;
+    text-decoration: none;
+    border-bottom: 1px dotted #c4a05a;
+  }
+  .nav a:hover { color: #5a4020; }
+</style>
+</head>
+<body>
+  <div style="max-width:1100px;margin:0 auto;">
+    <div class="nav"><a href="index.html">← Dashboard</a></div>
+    <h1>Satz des Pythagoras — Animierter Beweis</h1>
+    <p class="subtitle">Eine bewegte Herleitung von <i>a² + b² = c²</i> durch Flächenumlegung</p>
+  </div>
+
+  <div class="stage-wrap">
+    <svg id="stage" viewBox="0 0 900 560" preserveAspectRatio="xMidYMid meet"></svg>
+    <div class="progress"><div class="progress-bar" id="bar"></div></div>
+    <div class="caption" id="caption">Drücke <b>▶ Abspielen</b>, um die Animation zu starten.</div>
+    <div class="controls">
+      <button class="primary" id="play">▶ Abspielen</button>
+      <button id="restart">↻ Neustart</button>
+      <button id="prev">⟵ Schritt zurück</button>
+      <button id="next">Schritt vor ⟶</button>
+      <span class="speed">
+        Tempo
+        <input id="speed" type="range" min="0.3" max="2.5" step="0.1" value="1">
+        <span id="speedVal">1.0×</span>
+      </span>
+    </div>
+    <div class="inputs">
+      <label>a = <input id="aIn" type="number" min="1" max="6" step="0.5" value="3"></label>
+      <label>b = <input id="bIn" type="number" min="1" max="6" step="0.5" value="4"></label>
+      <span style="color:#8a7a55">⟶ c = <b id="cOut" style="color:#1a3848">5</b></span>
+    </div>
+  </div>
+
+<script>
+(() => {
+  const svg = document.getElementById('stage');
+  const captionEl = document.getElementById('caption');
+  const bar = document.getElementById('bar');
+  const playBtn = document.getElementById('play');
+  const restartBtn = document.getElementById('restart');
+  const prevBtn = document.getElementById('prev');
+  const nextBtn = document.getElementById('next');
+  const speedIn = document.getElementById('speed');
+  const speedVal = document.getElementById('speedVal');
+  const aIn = document.getElementById('aIn');
+  const bIn = document.getElementById('bIn');
+  const cOut = document.getElementById('cOut');
+
+  // Geometry parameters
+  let A = 3, B = 4;
+  let C = Math.hypot(A, B);
+  const SCALE = 48;        // pixels per unit
+  const VW = 900, VH = 560;
+
+  // Animation state
+  const PHASES = [
+    { dur: 1.0, name: 'intro' },
+    { dur: 2.2, name: 'drawTriangle' },
+    { dur: 1.0, name: 'rightAngle' },
+    { dur: 2.8, name: 'buildSquares' },
+    { dur: 2.0, name: 'showNumbers' },
+    { dur: 2.0, name: 'introduceProof' },
+    { dur: 2.6, name: 'splitToTwoSquares' },
+    { dur: 3.4, name: 'rearrange' },
+    { dur: 2.0, name: 'revealEquality' },
+    { dur: 2.0, name: 'conclusion' },
+  ];
+  let phase = 0;
+  let phaseT = 0;
+  let playing = false;
+  let lastTs = 0;
+  let speed = 1;
+
+  const CAPTIONS = [
+    'Wir beginnen mit einem <b>rechtwinkligen Dreieck</b> — der wichtigsten Figur der Geometrie.',
+    'Es hat zwei Katheten <b>a</b> und <b>b</b> sowie die längste Seite, die <b>Hypotenuse c</b>.',
+    'Der rechte Winkel (90°) liegt zwischen den beiden Katheten.',
+    'Auf jeder Seite errichten wir ein <b>Quadrat</b>: über a entsteht <b>a²</b>, über b entsteht <b>b²</b>, und über c entsteht <b>c²</b>.',
+    'Die Behauptung: die Flächen der kleinen Quadrate zusammen sind genauso groß wie das große Quadrat — <b>a² + b² = c²</b>.',
+    'Beweis durch Flächenumlegung. Wir betrachten <b>zwei identische Quadrate</b> mit Seitenlänge (a+b).',
+    'Beide haben die <b>gleiche Fläche</b>: (a+b)². Wir füllen sie auf zwei verschiedene Arten mit denselben <b>4 Dreiecken</b>.',
+    'Im linken Quadrat liegen die Dreiecke um ein gedrehtes Quadrat <b>c²</b>. Im rechten Quadrat <b>verschieben</b> wir sie — sie umranden jetzt <b>a²</b> und <b>b²</b>.',
+    'Da beide Quadrate gleich groß sind und jeweils dieselben 4 Dreiecke enthalten, müssen auch die <b>verbleibenden Flächen gleich groß</b> sein.',
+    '<b>c² = a² + b²</b> — der Satz des Pythagoras ist bewiesen. ✓'
+  ];
+
+  // Easing
+  const easeInOut = t => t < 0.5 ? 2*t*t : 1 - Math.pow(-2*t+2, 2)/2;
+  const easeOut = t => 1 - Math.pow(1-t, 3);
+  const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
+  const lerp = (a, b, t) => a + (b-a) * t;
+  const lerpPt = (p, q, t) => [lerp(p[0],q[0],t), lerp(p[1],q[1],t)];
+
+  // Colors
+  const C_TRI = '#e8a87c';
+  const C_TRI_STROKE = '#a45c2e';
+  const C_A = '#d8e8b8';
+  const C_A_STROKE = '#5a7a2e';
+  const C_B = '#f0d490';
+  const C_B_STROKE = '#a8862e';
+  const C_C = '#85b1c9';
+  const C_C_STROKE = '#3a6480';
+  const C_LINE = '#2c2418';
+  const C_AXIS = '#8a7a55';
+
+  function fmt(n) {
+    if (!isFinite(n)) return '–';
+    const s = (Math.round(n*100)/100).toString();
+    return s;
+  }
+
+  // SVG helpers
+  function el(name, attrs, inner) {
+    const s = '<' + name + ' ' +
+      Object.entries(attrs).map(([k,v]) => `${k}="${v}"`).join(' ') +
+      (inner !== undefined ? `>${inner}</${name}>` : ' />');
+    return s;
+  }
+  function line(x1,y1,x2,y2,stroke,sw,extra='') {
+    return `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${stroke}" stroke-width="${sw}" stroke-linecap="round" ${extra} />`;
+  }
+  function poly(pts, fill, stroke, sw, extra='') {
+    return `<polygon points="${pts.map(p=>p[0].toFixed(2)+','+p[1].toFixed(2)).join(' ')}" fill="${fill}" stroke="${stroke}" stroke-width="${sw}" ${extra} />`;
+  }
+  function text(x, y, content, style, anchor='middle', extra='') {
+    return `<text x="${x}" y="${y}" text-anchor="${anchor}" style="${style}" ${extra}>${content}</text>`;
+  }
+  function rightAngleMark(corner, dirX, dirY, size, stroke) {
+    // small square indicating 90°
+    const [cx, cy] = corner;
+    const p1 = [cx + dirX*size, cy];
+    const p2 = [cx + dirX*size, cy + dirY*size];
+    const p3 = [cx, cy + dirY*size];
+    return `<polyline points="${p1[0]},${p1[1]} ${p2[0]},${p2[1]} ${p3[0]},${p3[1]}" fill="none" stroke="${stroke}" stroke-width="1.6" />`;
+  }
+
+  // Core scene rendering
+  function render() {
+    const ph = PHASES[phase];
+    const tRaw = clamp(phaseT, 0, 1);
+    const t = easeInOut(tRaw);
+    let out = '';
+
+    // We render different scenes depending on phase
+    // Phases 0..4 use the "single triangle with squares" scene (centered)
+    // Phases 5..9 use the "two big squares" scene
+
+    if (phase <= 4) {
+      out += renderTriangleScene(phase, t, tRaw);
+    } else {
+      out += renderProofScene(phase, t, tRaw);
+    }
+
+    svg.innerHTML = out;
+    bar.style.width = (overallProgress()*100).toFixed(1) + '%';
+    captionEl.innerHTML = CAPTIONS[phase];
+  }
+
+  function overallProgress() {
+    const total = PHASES.reduce((s,p) => s+p.dur, 0);
+    let done = 0;
+    for (let i = 0; i < phase; i++) done += PHASES[i].dur;
+    done += clamp(phaseT,0,1) * PHASES[phase].dur;
+    return done / total;
+  }
+
+  // ---------- Scene 1: Triangle with squares on three sides ----------
+  function renderTriangleScene(phase, t, tRaw) {
+    // Triangle vertices in SVG coords (y down)
+    // Right angle at C (bottom-left), legs along x (b) and along y (a-up)
+    // We'll place the right angle near bottom-left of the stage.
+
+    // Compute total bounding box: triangle plus squares
+    // Triangle: width = B units, height = A units.
+    // Square on B is below (extends down by B), Square on A is left (extends left by A),
+    // Square on C is built on the hypotenuse (outward).
+
+    const cx0 = VW/2, cy0 = VH/2 + 20; // center anchor
+    // Place right-angle vertex (call it P0) so that the whole figure is roughly centered.
+    const P0 = [cx0 - (B*SCALE)/2 + A*SCALE*0.15, cy0 + (A*SCALE)/2 - B*SCALE*0.1];
+    const Pb = [P0[0] + B*SCALE, P0[1]];       // along x = b axis (right)
+    const Pa = [P0[0], P0[1] - A*SCALE];       // up by a
+
+    // The triangle vertices: P0 (right angle), Pa (top-left), Pb (right)
+    // a = vertical side, b = horizontal side, c = hypotenuse from Pa to Pb
+
+    // ---- Draw triangle (phase >=1, animate drawing in phase 1) ----
+    let triAlpha = 0;
+    if (phase === 0) triAlpha = easeOut(tRaw); // fade in subtitle scene
+    else triAlpha = 1;
+
+    // Phase 1 progressively reveals the legs and hypotenuse
+    let progB = 1, progA = 1, progC = 1;
+    if (phase === 1) {
+      progB = clamp(tRaw / 0.35, 0, 1);
+      progA = clamp((tRaw - 0.30) / 0.35, 0, 1);
+      progC = clamp((tRaw - 0.60) / 0.40, 0, 1);
+    }
+    if (phase === 0) { progB = 0; progA = 0; progC = 0; }
+
+    // Compute partially-drawn endpoints
+    const Pb_p = lerpPt(P0, Pb, progB);
+    const Pa_p = lerpPt(P0, Pa, progA);
+    const Pc_p = lerpPt(Pa, Pb, progC);
+
+    let out = '';
+
+    // Background hint: dashed coord (only in phase 0)
+    if (phase === 0) {
+      const a0 = easeOut(tRaw);
+      out += text(VW/2, VH/2 - 30, 'Rechtwinkliges Dreieck',
+        `font-family: Georgia, serif; font-size: 26px; fill: rgba(44,36,24,${a0}); font-style: italic`, 'middle');
+      out += text(VW/2, VH/2 + 6, 'mit Katheten a, b und Hypotenuse c',
+        `font-family: Georgia, serif; font-size: 18px; fill: rgba(106,93,68,${a0})`, 'middle');
+      return out;
+    }
+
+    // Triangle fill (only after legs+hypotenuse drawn or in later phases)
+    let triFillAlpha = 0;
+    if (phase >= 2) triFillAlpha = phase === 2 ? easeOut(tRaw) : 1;
+    if (triFillAlpha > 0) {
+      out += poly([P0, Pa, Pb], `rgba(255,250,235,${0.85*triFillAlpha})`, 'transparent', 0);
+    }
+
+    // Squares on the three sides
+    // Build square on side b (horizontal, below): from P0 to Pb, extending downward (+y)
+    // Build square on side a (vertical, left): from P0 to Pa, extending leftward (-x)
+    // Build square on side c (hypotenuse): from Pa to Pb, extending outward (away from P0)
+
+    // Square scale-in animation in phase 3
+    let sqB = 0, sqA = 0, sqC = 0;
+    if (phase === 3) {
+      sqB = clamp(tRaw / 0.40, 0, 1);
+      sqA = clamp((tRaw - 0.25) / 0.45, 0, 1);
+      sqC = clamp((tRaw - 0.55) / 0.45, 0, 1);
+    } else if (phase >= 4) {
+      sqB = sqA = sqC = 1;
+    }
+
+    // Square on b: corners P0, Pb, Pb+(0,B*S), P0+(0,B*S)
+    if (sqB > 0) {
+      const e = easeOut(sqB);
+      const h = B * SCALE * e;
+      const sq = [P0, Pb, [Pb[0], Pb[1]+h], [P0[0], P0[1]+h]];
+      out += poly(sq, C_B, C_B_STROKE, 2);
+      if (sqB > 0.5) {
+        const cx = (P0[0] + Pb[0]) / 2;
+        const cy = P0[1] + h / 2;
+        const a = clamp((sqB-0.5)*2, 0, 1);
+        out += text(cx, cy + 8, 'b²',
+          `font-family: Georgia, serif; font-size: 32px; fill: rgba(90,68,30,${a}); font-weight: 700`);
+      }
+    }
+
+    // Square on a: corners P0, Pa, Pa+(-A*S,0), P0+(-A*S,0)
+    if (sqA > 0) {
+      const e = easeOut(sqA);
+      const w = A * SCALE * e;
+      const sq = [P0, Pa, [Pa[0]-w, Pa[1]], [P0[0]-w, P0[1]]];
+      out += poly(sq, C_A, C_A_STROKE, 2);
+      if (sqA > 0.5) {
+        const cx = P0[0] - w/2;
+        const cy = (P0[1] + Pa[1]) / 2;
+        const a = clamp((sqA-0.5)*2, 0, 1);
+        out += text(cx, cy + 10, 'a²',
+          `font-family: Georgia, serif; font-size: 32px; fill: rgba(60,80,30,${a}); font-weight: 700`);
+      }
+    }
+
+    // Square on c (hypotenuse): outward = perpendicular to (Pb-Pa), away from P0
+    if (sqC > 0) {
+      const e = easeOut(sqC);
+      const vx = Pb[0]-Pa[0], vy = Pb[1]-Pa[1];
+      const len = Math.hypot(vx, vy);
+      // Perpendicular pointing away from P0
+      let nx = -vy/len, ny = vx/len;
+      // Check it points away from P0: midpoint of (Pa,Pb), direction to P0 should be opposite
+      const mx = (Pa[0]+Pb[0])/2, my = (Pa[1]+Pb[1])/2;
+      const toP0x = P0[0]-mx, toP0y = P0[1]-my;
+      if (nx*toP0x + ny*toP0y > 0) { nx = -nx; ny = -ny; }
+      const d = C * SCALE * e;
+      const Pa2 = [Pa[0] + nx*d, Pa[1] + ny*d];
+      const Pb2 = [Pb[0] + nx*d, Pb[1] + ny*d];
+      out += poly([Pa, Pb, Pb2, Pa2], C_C, C_C_STROKE, 2);
+      if (sqC > 0.5) {
+        const cx = (Pa[0]+Pb[0]+Pa2[0]+Pb2[0])/4;
+        const cy = (Pa[1]+Pb[1]+Pa2[1]+Pb2[1])/4;
+        const a = clamp((sqC-0.5)*2, 0, 1);
+        out += text(cx, cy + 10, 'c²',
+          `font-family: Georgia, serif; font-size: 34px; fill: rgba(30,60,80,${a}); font-weight: 700`);
+      }
+    }
+
+    // Draw the triangle edges (on top of squares)
+    if (progB > 0) out += line(P0[0], P0[1], Pb_p[0], Pb_p[1], C_LINE, 3.2);
+    if (progA > 0) out += line(P0[0], P0[1], Pa_p[0], Pa_p[1], C_LINE, 3.2);
+    if (progC > 0) out += line(Pa[0], Pa[1], Pc_p[0], Pc_p[1], C_LINE, 3.2);
+
+    // Right-angle marker (phase 2)
+    if (phase >= 2) {
+      const a = phase === 2 ? easeOut(tRaw) : 1;
+      const m = 14;
+      out += `<g opacity="${a}">${rightAngleMark(P0, 1, -1, m, '#c44a4a')}</g>`;
+      if (phase === 2) {
+        out += text(P0[0] + 28, P0[1] - 28, '90°',
+          `font-family: Georgia, serif; font-size: 17px; fill: rgba(196,74,74,${a}); font-weight: 700`, 'start');
+      }
+    }
+
+    // Labels a, b, c
+    if (progB > 0.8) {
+      const a = clamp((progB-0.8)/0.2, 0, 1);
+      out += text((P0[0]+Pb[0])/2, P0[1] - 12, `b = ${fmt(B)}`,
+        `font-family: Georgia, serif; font-size: 19px; font-weight: 700; fill: rgba(90,68,30,${a})`);
+    }
+    if (progA > 0.8) {
+      const a = clamp((progA-0.8)/0.2, 0, 1);
+      out += text(P0[0] - 14, (P0[1]+Pa[1])/2 + 6, `a = ${fmt(A)}`,
+        `font-family: Georgia, serif; font-size: 19px; font-weight: 700; fill: rgba(60,80,30,${a})`, 'end');
+    }
+    if (progC > 0.8) {
+      const a = clamp((progC-0.8)/0.2, 0, 1);
+      // place above hypotenuse
+      const mx = (Pa[0]+Pb[0])/2, my = (Pa[1]+Pb[1])/2;
+      const vx = Pb[0]-Pa[0], vy = Pb[1]-Pa[1];
+      const len = Math.hypot(vx, vy);
+      const nx = vy/len, ny = -vx/len; // perpendicular toward "above"
+      const lx = mx + nx*20, ly = my + ny*20;
+      const ang = Math.atan2(vy, vx) * 180/Math.PI;
+      out += `<text x="${lx}" y="${ly}" text-anchor="middle" transform="rotate(${ang} ${lx} ${ly})" style="font-family: Georgia, serif; font-size: 19px; font-weight: 700; fill: rgba(30,60,80,${a})">c = ${fmt(C)}</text>`;
+    }
+
+    // Phase 4: show the equation/numbers
+    if (phase === 4) {
+      const a = easeOut(tRaw);
+      const eqY = 60;
+      out += text(VW/2, eqY, `a² + b² = c²`,
+        `font-family: Georgia, serif; font-size: 32px; fill: rgba(44,36,24,${a}); font-weight: 700`);
+      out += text(VW/2, eqY + 32, `${fmt(A*A)}  +  ${fmt(B*B)}  =  ${fmt(C*C)}`,
+        `font-family: Georgia, serif; font-size: 22px; fill: rgba(74,138,92,${a}); font-style: italic`);
+    }
+
+    return out;
+  }
+
+  // ---------- Scene 2: Rearrangement proof (two big (a+b)² squares) ----------
+  // Define both squares side by side. Each is (a+b) × (a+b) on the page.
+  // In phase 5 (introduceProof), we transition from triangle scene to two squares.
+  // Simpler: render two squares appearing.
+  function renderProofScene(phase, t, tRaw) {
+    const S = (A + B) * SCALE; // side length in pixels
+    const gap = 60;
+    const totalW = 2*S + gap;
+    const x0L = (VW - totalW) / 2;
+    const y0  = (VH - S) / 2 + 10;
+    const x0R = x0L + S + gap;
+
+    let out = '';
+
+    // Fade-in opacity for the whole scene in phase 5
+    let alpha = 1;
+    if (phase === 5) alpha = easeOut(tRaw);
+
+    // Triangles config in LEFT square (always at "config1": pinwheel around c²)
+    // Vertices (relative to top-left of left square):
+    // We arrange so the inner square has side c.
+    const inner_c_L = [
+      [A*SCALE, 0],
+      [S, A*SCALE],
+      [B*SCALE, S],
+      [0, B*SCALE],
+    ];
+    // 4 triangles for LEFT square (config 1)
+    const triL = [
+      [[0,0], inner_c_L[0], inner_c_L[3]],            // top-left corner
+      [[S,0], inner_c_L[1], inner_c_L[0]],            // top-right corner
+      [[S,S], inner_c_L[2], inner_c_L[1]],            // bottom-right corner
+      [[0,S], inner_c_L[3], inner_c_L[2]],            // bottom-left corner
+    ];
+
+    // Config 2 in RIGHT square: triangles paired into two a×b rectangles,
+    // leaving a² (bottom-right) and b² (top-left).
+    // Top-right rectangle (a wide × b tall) at (B, 0) to (S, B*S? ):
+    // Using: B = horizontal leg length, A = vertical leg length...
+    // Actually let me use: b² occupies top-left corner with side B,
+    // a² occupies bottom-right corner with side A.
+    // Then top-right rectangle is A wide × B tall, bottom-left rectangle is B wide × A tall.
+    const Bp = B*SCALE, Ap = A*SCALE;
+    // Top-right rectangle vertices: (Bp,0), (S,0), (S,Bp), (Bp,Bp)
+    // Two triangles inside it (sharing diagonal from (Bp,0) to (S,Bp)):
+    //   tri_R1: (Bp,0), (S,0), (S,Bp)      -- upper-right half
+    //   tri_R2: (Bp,0), (S,Bp), (Bp,Bp)    -- lower-left half
+    // Bottom-left rectangle vertices: (0,Bp), (Bp,Bp), (Bp,S), (0,S)
+    //   tri_R3: (0,Bp), (Bp,Bp), (Bp,S)
+    //   tri_R4: (0,Bp), (Bp,S), (0,S)
+    const triR = [
+      [[Bp,0],  [S,0],   [S,Bp]],     // R1
+      [[Bp,0],  [S,Bp],  [Bp,Bp]],    // R2
+      [[0,Bp],  [Bp,Bp], [Bp,S]],     // R3
+      [[0,Bp],  [Bp,S],  [0,S]],      // R4
+    ];
+
+    // We need to map triL[i] -> triR[?] for animation. Pair by visual position.
+    // triL[0] (top-left corner, right angle at (0,0)) → maps to triR[3] (lower-left of bottom-left rect, right angle at (0,S))? Actually let's try to pair by general region:
+    // triL[0] top-left → triR[3] bottom-left's lower (or R1 top-right's upper)
+    // Let me pair this way for clean animation:
+    // triL[0] (TL) → triR[1] (top-right rect, lower triangle near center)
+    // triL[1] (TR) → triR[0] (top-right rect, upper triangle)
+    // triL[2] (BR) → triR[2] (bottom-left rect, upper triangle)
+    // triL[3] (BL) → triR[3] (bottom-left rect, lower triangle)
+    // Actually, simpler: triL[i] always sits in left square at one config1 position; in right square it animates to one of the triR positions.
+
+    // For the RIGHT square animation, we render both states based on phase progression.
+    // In phase 6 we slowly populate the right square with triangles in config1 too.
+    // In phase 7 we animate the triangles in the right square from config1 to config2.
+
+    // Determine the state of the right square triangles
+    let rightConfig = null;  // null = none yet; 'c1' = config1; interpolating; 'c2' = config2
+    let lerpT = 0;
+    if (phase === 5) {
+      rightConfig = 'c1';
+      lerpT = 0;
+    } else if (phase === 6) {
+      rightConfig = 'c1';
+      lerpT = 0;
+    } else if (phase === 7) {
+      rightConfig = 'interp';
+      lerpT = easeInOut(tRaw);
+    } else if (phase >= 8) {
+      rightConfig = 'c2';
+      lerpT = 1;
+    }
+
+    // Mapping LEFT-index → RIGHT-index for triangle correspondence in animation
+    const map = [1, 0, 2, 3];
+
+    // Helper: shift a triangle's points by adding origin offset
+    const off = (pts, ox, oy) => pts.map(p => [p[0]+ox, p[1]+oy]);
+
+    // --- Render LEFT square ---
+    // Background big square outline + label
+    out += `<g opacity="${alpha}">`;
+    out += `<rect x="${x0L}" y="${y0}" width="${S}" height="${S}" fill="#fdfbf4" stroke="${C_LINE}" stroke-width="2.5" />`;
+    // (a+b) label below
+    if (phase >= 6 || (phase === 5 && tRaw > 0.5)) {
+      const aL = phase===5 ? clamp((tRaw-0.5)*2,0,1) : 1;
+      out += text(x0L + S/2, y0 + S + 28, `Seite (a + b) = ${fmt(A+B)},  Fläche = (a+b)² = ${fmt((A+B)*(A+B))}`,
+        `font-family: Georgia, serif; font-size: 14px; font-style: italic; fill: rgba(106,93,68,${aL})`);
+    }
+    // c² inner square (drawn underneath triangles for blue background, but actually
+    // the c² is the visible area between triangles, so just fill it)
+    out += poly(off(inner_c_L, x0L, y0), C_C, C_C_STROKE, 2);
+    // Triangles in left square
+    for (let i = 0; i < 4; i++) {
+      out += poly(off(triL[i], x0L, y0), C_TRI, C_TRI_STROKE, 1.6);
+    }
+    // c² label
+    const ccx = (inner_c_L[0][0]+inner_c_L[1][0]+inner_c_L[2][0]+inner_c_L[3][0])/4 + x0L;
+    const ccy = (inner_c_L[0][1]+inner_c_L[1][1]+inner_c_L[2][1]+inner_c_L[3][1])/4 + y0;
+    out += text(ccx, ccy + 12, 'c²',
+      `font-family: Georgia, serif; font-size: 38px; fill: #1a3848; font-weight: 700`);
+    out += '</g>';
+
+    // --- Render RIGHT square ---
+    if (rightConfig === null) {
+      // not yet shown
+    } else {
+      // Right square outline grows in during phase 5/6
+      let rAlpha = 1;
+      if (phase === 5) rAlpha = clamp((tRaw-0.3)/0.5, 0, 1);
+      out += `<g opacity="${rAlpha * alpha}">`;
+      out += `<rect x="${x0R}" y="${y0}" width="${S}" height="${S}" fill="#fdfbf4" stroke="${C_LINE}" stroke-width="2.5" />`;
+
+      // c² fill (visible while in config1, fades during morph)
+      const cOp = 1 - lerpT;
+      if (cOp > 0.02) {
+        out += `<polygon points="${off(inner_c_L, x0R, y0).map(p=>p[0].toFixed(2)+','+p[1].toFixed(2)).join(' ')}" fill="${C_C}" fill-opacity="${cOp}" stroke="${C_C_STROKE}" stroke-width="${2*cOp}" />`;
+      }
+
+      // a² and b² backgrounds (visible only when triangles are in config2)
+      // We show them with opacity = lerpT
+      if (lerpT > 0) {
+        const op = lerpT;
+        // b² at top-left (B×B)
+        out += `<rect x="${x0R}" y="${y0}" width="${Bp}" height="${Bp}" fill="${C_B}" stroke="${C_B_STROKE}" stroke-width="${1.5*op}" fill-opacity="${op}" />`;
+        // a² at bottom-right (A×A)
+        out += `<rect x="${x0R+Bp}" y="${y0+Bp}" width="${Ap}" height="${Ap}" fill="${C_A}" stroke="${C_A_STROKE}" stroke-width="${1.5*op}" fill-opacity="${op}" />`;
+      }
+
+      // Triangles interpolated from triL[i] (in right square coords) to triR[map[i]]
+      for (let i = 0; i < 4; i++) {
+        const src = triL[i];
+        const dst = triR[map[i]];
+        const cur = src.map((p, k) => lerpPt(p, dst[k], lerpT));
+        out += poly(off(cur, x0R, y0), C_TRI, C_TRI_STROKE, 1.6);
+      }
+
+      // c² label on right (fades out during morph)
+      if (cOp > 0.05) {
+        const ccx2 = (inner_c_L[0][0]+inner_c_L[1][0]+inner_c_L[2][0]+inner_c_L[3][0])/4 + x0R;
+        const ccy2 = (inner_c_L[0][1]+inner_c_L[1][1]+inner_c_L[2][1]+inner_c_L[3][1])/4 + y0;
+        out += text(ccx2, ccy2 + 12, 'c²',
+          `font-family: Georgia, serif; font-size: 38px; fill: rgba(26,56,72,${cOp}); font-weight: 700`);
+      }
+
+      // Labels for a² and b² (right square)
+      if (lerpT > 0.6) {
+        const op = clamp((lerpT-0.6)/0.4, 0, 1);
+        out += text(x0R + Bp/2, y0 + Bp/2 + 12, 'b²',
+          `font-family: Georgia, serif; font-size: 36px; fill: rgba(90,68,30,${op}); font-weight: 700`);
+        out += text(x0R + Bp + Ap/2, y0 + Bp + Ap/2 + 10, 'a²',
+          `font-family: Georgia, serif; font-size: 32px; fill: rgba(60,80,30,${op}); font-weight: 700`);
+      }
+      if (phase >= 6 || (phase === 5 && tRaw > 0.5)) {
+        const aL = phase===5 ? clamp((tRaw-0.5)*2,0,1) : 1;
+        out += text(x0R + S/2, y0 + S + 28, `Seite (a + b) = ${fmt(A+B)},  Fläche = (a+b)² = ${fmt((A+B)*(A+B))}`,
+          `font-family: Georgia, serif; font-size: 14px; font-style: italic; fill: rgba(106,93,68,${aL})`);
+      }
+      out += '</g>';
+    }
+
+    // Top labels & arrows (=)
+    out += text(x0L + S/2, y0 - 20, `(a + b)²`,
+      `font-family: Georgia, serif; font-size: 22px; fill: #2c2418; font-weight: 700`);
+    if (rightConfig !== null) {
+      out += text(x0R + S/2, y0 - 20, `(a + b)²`,
+        `font-family: Georgia, serif; font-size: 22px; fill: #2c2418; font-weight: 700`);
+      // Equals sign between
+      out += text(x0L + S + gap/2, y0 + S/2, '=',
+        `font-family: Georgia, serif; font-size: 60px; fill: #c44a4a; font-weight: 700`);
+    }
+
+    // Phase 8/9: highlight the equality (subtraction step)
+    if (phase >= 8) {
+      const a = phase === 8 ? easeOut(tRaw) : 1;
+      // Box under the figure with the equation
+      const eqY = y0 + S + 70;
+      out += text(VW/2, eqY,
+        '4 Dreiecke + c²  =  4 Dreiecke + a² + b²',
+        `font-family: Georgia, serif; font-size: 20px; fill: rgba(44,36,24,${a}); font-style: italic`);
+      out += text(VW/2, eqY + 32,
+        '⟹   c²  =  a² + b²',
+        `font-family: Georgia, serif; font-size: 28px; fill: rgba(74,138,92,${a}); font-weight: 700`);
+    }
+    if (phase === 9) {
+      const a = easeOut(tRaw);
+      // Sparkle / final highlight: draw a glowing border around the equation
+      const eqY = y0 + S + 70;
+      out += `<rect x="${VW/2 - 200}" y="${eqY + 8}" width="400" height="40" rx="8" fill="none" stroke="#4a8a5c" stroke-width="${2.5*a}" stroke-dasharray="6 4" />`;
+    }
+
+    return out;
+  }
+
+  // ---- Animation loop ----
+  function tick(ts) {
+    if (!playing) { lastTs = 0; return; }
+    if (!lastTs) lastTs = ts;
+    const dt = (ts - lastTs) / 1000 * speed;
+    lastTs = ts;
+    phaseT += dt / PHASES[phase].dur;
+    if (phaseT >= 1) {
+      phaseT = 0;
+      phase++;
+      if (phase >= PHASES.length) {
+        phase = PHASES.length - 1;
+        phaseT = 1;
+        playing = false;
+        playBtn.textContent = '↻ Erneut abspielen';
+        render();
+        return;
+      }
+    }
+    render();
+    requestAnimationFrame(tick);
+  }
+
+  function play() {
+    if (phase >= PHASES.length - 1 && phaseT >= 1) {
+      // restart
+      phase = 0; phaseT = 0;
+    }
+    playing = true;
+    lastTs = 0;
+    playBtn.textContent = '⏸ Pause';
+    requestAnimationFrame(tick);
+  }
+  function pause() {
+    playing = false;
+    playBtn.textContent = '▶ Weiter';
+  }
+  function restart() {
+    phase = 0; phaseT = 0;
+    playing = false;
+    playBtn.textContent = '▶ Abspielen';
+    render();
+  }
+  function nextStep() {
+    pause();
+    phaseT = 0;
+    phase = Math.min(PHASES.length - 1, phase + 1);
+    render();
+  }
+  function prevStep() {
+    pause();
+    phaseT = 0;
+    phase = Math.max(0, phase - 1);
+    render();
+  }
+
+  playBtn.addEventListener('click', () => { playing ? pause() : play(); });
+  restartBtn.addEventListener('click', restart);
+  nextBtn.addEventListener('click', nextStep);
+  prevBtn.addEventListener('click', prevStep);
+  speedIn.addEventListener('input', () => {
+    speed = parseFloat(speedIn.value);
+    speedVal.textContent = speed.toFixed(1) + '×';
+  });
+
+  function updateAB() {
+    const newA = parseFloat(aIn.value);
+    const newB = parseFloat(bIn.value);
+    if (isFinite(newA) && isFinite(newB) && newA > 0 && newB > 0) {
+      A = newA; B = newB;
+      C = Math.hypot(A, B);
+      cOut.textContent = fmt(C);
+      render();
+    }
+  }
+  aIn.addEventListener('input', updateAB);
+  bIn.addEventListener('input', updateAB);
+
+  // Initial render
+  render();
+})();
+</script>
+</body>
+</html>
