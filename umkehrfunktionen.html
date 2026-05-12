@@ -310,7 +310,7 @@
     // Unit circle area
     const UCX = 170, UCY = 130, UR = 95;
     // Graph area
-    const GX = 35, GY = 270, GW = 280, GH = 150;
+    const GX = 35, GY = 280, GW = 280, GH = 145;
 
     function render() {
       const v = clamp(parseFloat(slider.value), cfg.sliderMin, cfg.sliderMax);
@@ -372,7 +372,7 @@
       // Point
       out += `<circle cx="${Px}" cy="${Py}" r="5" fill="#b85c2e" stroke="white" stroke-width="2" />`;
       // Result label
-      out += `<text x="${UCX}" y="${UCY+UR+22}" text-anchor="middle" font-family="Georgia, serif" font-size="13" fill="#2c2418" font-weight="700">α = ${fmtDeg(deg)} = ${fmtRad(rad)}</text>`;
+      out += `<text x="${UCX}" y="${UCY+UR+38}" text-anchor="middle" font-family="Georgia, serif" font-size="13" fill="#2c2418" font-weight="700">α = ${fmtDeg(deg)} = ${fmtRad(rad)}</text>`;
 
       // --- Graph area ---
       let xMin, xMax, yMin, yMax, xTicks, yTicks;
