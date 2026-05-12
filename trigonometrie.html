@@ -247,6 +247,11 @@
 
     let out = '';
 
+    // Clip-path for the function-graph area: the tan curve extends beyond
+    // ±1.5 toward its asymptotes; clipping hides the off-screen overshoot
+    // cleanly instead of producing a horizontal clamp line at the top/bottom.
+    out += `<defs><clipPath id="trigGraphClip"><rect x="${GX}" y="${GY}" width="${GW}" height="${GH}" /></clipPath></defs>`;
+
     // ===== LEFT: Unit circle =====
     // Axes
     out += `<line x1="${CX-R-30}" y1="${CY}" x2="${CX+R+50}" y2="${CY}" stroke="#bcb190" stroke-width="1.2" />`;
@@ -319,7 +324,9 @@
     // We show angle range 0..720°
     const ANG_MIN = 0, ANG_MAX = 720;
     const xOfDeg = d => GX + (clamp(d, ANG_MIN, ANG_MAX) - ANG_MIN) / (ANG_MAX - ANG_MIN) * GW;
-    const yOfVal = v => G_AXIS_Y - clamp(v, -1.6, 1.6) * (GH/2 - 30) / 1.5;
+    // yOfVal: allow some headroom beyond the visible ±1.5 range so the tan
+    // curve can extend off-screen and get cleanly clipped by clipPath.
+    const yOfVal = v => G_AXIS_Y - clamp(v, -4, 4) * (GH/2 - 30) / 1.5;
 
     // Graph background
     out += `<rect x="${GX}" y="${GY}" width="${GW}" height="${GH}" fill="#fcfaf2" stroke="#e8e2d0" stroke-width="1" rx="6" />`;
@@ -345,34 +352,40 @@
     out += `<text x="${GX+8}" y="${GY+18}" font-family="Georgia, serif" font-size="13" fill="#8a7a55" font-style="italic">f(α)</text>`;
 
     // Plot sin, cos, tan up to current angle
-    const STEPS = 480;
+    const STEPS = 1440;
     const maxD = clamp(angleDeg, 0, ANG_MAX);
     function buildPath(fn, breakOnDiscontinuity) {
       let d = '';
       let started = false;
-      let prevY = null;
+      let prevVal = null;
       for (let i = 0; i <= STEPS; i++) {
         const deg = ANG_MIN + (maxD - ANG_MIN) * i / STEPS;
         if (deg > maxD + 0.001) break;
         const val = fn(toRad(deg));
         const x = xOfDeg(deg);
-        if (!isFinite(val) || Math.abs(val) > 6) {
+        if (!isFinite(val)) {
           started = false;
-          prevY = null;
+          prevVal = null;
           continue;
         }
-        const y = yOfVal(val);
-        if (breakOnDiscontinuity && prevY !== null && Math.abs(y - prevY) > GH * 0.6) {
+        // Detect asymptote: consecutive samples flip sign while both have large magnitude
+        if (breakOnDiscontinuity && prevVal !== null &&
+            Math.sign(val) * Math.sign(prevVal) < 0 &&
+            Math.abs(prevVal) > 1.5 && Math.abs(val) > 1.5) {
           started = false;
         }
+        const y = yOfVal(val);
         d += (started ? ' L ' : ' M ') + x.toFixed(1) + ' ' + y.toFixed(1);
         started = true;
-        prevY = y;
+        prevVal = val;
       }
       return d;
     }
 
     if (angleDeg > 0) {
+      // The curves are clipped to the graph rectangle so that tan can extend
+      // toward its asymptotes without painting a horizontal clamp line.
+      out += `<g clip-path="url(#trigGraphClip)">`;
       // tan (drawn first, lighter weight, with discontinuities broken)
       const tanD = buildPath(Math.tan, true);
       if (tanD) out += `<path d="${tanD}" fill="none" stroke="#5a7a2e" stroke-width="1.8" opacity="0.85" />`;
@@ -382,6 +395,7 @@
       // sin
       const sinD = buildPath(Math.sin, false);
       if (sinD) out += `<path d="${sinD}" fill="none" stroke="#c44a4a" stroke-width="2.4" />`;
+      out += `</g>`;
     }
 
     // Current vertical indicator line at current angle
