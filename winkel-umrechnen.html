@@ -104,8 +104,12 @@
     color: #2c2418;
     font-family: Georgia, serif;
     font-size: 14px;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
+    letter-spacing: 0.02em;
+  }
+  /* sin/cos/tan headers use math-style italic lowercase */
+  table.ref th.fn {
+    font-style: italic;
+    font-family: Georgia, serif;
   }
   table.ref td.deg { color: #b85c2e; font-weight: 700; }
   table.ref td.rad { color: #4a8a5c; font-weight: 700; }
@@ -192,7 +196,7 @@
     <div class="card">
       <h2>Interaktiver Umrechner</h2>
       <div class="converter">
-        <svg id="circleSvg" viewBox="0 0 420 420" preserveAspectRatio="xMidYMid meet"></svg>
+        <svg id="circleSvg" viewBox="0 0 420 480" preserveAspectRatio="xMidYMid meet"></svg>
         <div class="input-block">
           <div class="field">
             <label for="degIn">Grad</label>
@@ -222,7 +226,7 @@
       <p style="color:#6a5d44;font-family:Georgia,serif;font-style:italic;margin:0 0 10px;font-size:14px;">Klick auf eine Zeile, um den Winkel im Umrechner darzustellen.</p>
       <table class="ref" id="refTable">
         <thead>
-          <tr><th>Grad</th><th>Bogenmaß (exakt)</th><th>Bogenmaß (dezimal)</th><th>sin α</th><th>cos α</th><th>tan α</th></tr>
+          <tr><th>Grad</th><th>Bogenmaß (exakt)</th><th>Bogenmaß (dezimal)</th><th class="fn">sin α</th><th class="fn">cos α</th><th class="fn">tan α</th></tr>
         </thead>
         <tbody id="refBody"></tbody>
       </table>
@@ -437,7 +441,7 @@
     // Display deg + rad below
     const radVal = toRad(deg);
     const radExact = fmtRadExact(radVal);
-    out += `<text x="${CX}" y="395" text-anchor="middle" font-family="Georgia, serif" font-size="15" fill="#2c2418" font-weight="700">α = ${fmt(deg,1)}° = ${radExact ? radExact + ' rad' : fmt(radVal,4) + ' rad'}</text>`;
+    out += `<text x="${CX}" y="445" text-anchor="middle" font-family="Georgia, serif" font-size="16" fill="#2c2418" font-weight="700">α = ${fmt(deg,1)}° = ${radExact ? radExact + ' rad' : fmt(radVal,4) + ' rad'}</text>`;
 
     svg.innerHTML = out;
   }
