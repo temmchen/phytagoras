@@ -2,354 +2,185 @@
 <html lang="de">
 <head>
 <meta charset="UTF-8">
-<title>Satz des Pythagoras — Herleitung über Flächen</title>
+<title>Satz des Pythagoras — Startseite</title>
 <style>
   * { box-sizing: border-box; }
   body {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     margin: 0;
-    padding: 28px;
+    padding: 40px 24px 60px;
     background: linear-gradient(180deg, #fbf8f1 0%, #f3eede 100%);
     color: #1f1f1f;
     min-height: 100vh;
   }
+  .wrap {
+    max-width: 980px;
+    margin: 0 auto;
+  }
+  .hero {
+    text-align: center;
+    margin-bottom: 44px;
+  }
   h1 {
-    font-size: 30px;
-    margin: 0 0 6px;
+    font-size: 40px;
+    margin: 0 0 12px;
     color: #2c2418;
     letter-spacing: -0.01em;
   }
-  .subtitle {
-    color: #6a5d44;
-    margin: 0 0 24px;
-    font-size: 17px;
+  .formula {
     font-family: Georgia, serif;
-    font-style: italic;
+    font-size: 30px;
+    color: #1a3848;
+    margin: 12px 0 8px;
+    font-weight: 700;
   }
-  .dashboard {
+  .formula em {
+    font-style: italic;
+    color: #5a2c14;
+  }
+  .lead {
+    color: #6a5d44;
+    font-family: Georgia, serif;
+    font-size: 18px;
+    font-style: italic;
+    margin: 0 0 8px;
+  }
+  .cards {
     display: grid;
-    grid-template-columns: minmax(0, 1.3fr) minmax(320px, 1fr);
+    grid-template-columns: 1fr 1fr;
     gap: 24px;
-    align-items: start;
-    max-width: 1300px;
+    margin-top: 12px;
   }
   .card {
     background: white;
     border: 1px solid #e8e2d0;
-    border-radius: 14px;
-    padding: 22px;
-    box-shadow: 0 2px 10px rgba(60, 40, 10, 0.06);
+    border-radius: 16px;
+    padding: 28px;
+    box-shadow: 0 2px 14px rgba(60, 40, 10, 0.07);
+    text-decoration: none;
+    color: inherit;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+  }
+  .card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 22px rgba(60, 40, 10, 0.12);
+    border-color: #c4a05a;
+  }
+  .card .icon {
+    width: 100%;
+    height: 170px;
+    background: #fbf6e6;
+    border-radius: 10px;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
   .card h2 {
-    font-size: 13px;
+    font-size: 22px;
+    margin: 0 0 8px;
+    color: #2c2418;
+  }
+  .card p {
     margin: 0 0 14px;
-    color: #8a7a55;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    font-weight: 700;
-  }
-  svg { width: 100%; height: auto; display: block; }
-  .legend {
-    display: flex;
-    gap: 16px;
-    flex-wrap: wrap;
-    margin-top: 14px;
-    font-size: 14px;
-    color: #4a4030;
-  }
-  .swatch {
-    display: inline-block;
-    width: 14px;
-    height: 14px;
-    border-radius: 3px;
-    vertical-align: middle;
-    margin-right: 6px;
-  }
-  .controls { display: grid; gap: 12px; }
-  .field { display: flex; align-items: center; gap: 10px; }
-  .field label {
-    width: 90px;
-    font-weight: 600;
-    font-family: Georgia, serif;
-    font-size: 17px;
-    color: #2c2418;
-  }
-  .field input, .field select {
-    flex: 1;
-    padding: 10px 12px;
-    border: 1px solid #d4ccb4;
-    border-radius: 8px;
-    font-size: 16px;
-    background: white;
-    font-family: inherit;
-  }
-  .field input:focus, .field select:focus {
-    outline: none;
-    border-color: #c4a05a;
-    box-shadow: 0 0 0 3px rgba(196, 160, 90, 0.18);
-  }
-  .field input:disabled {
-    background: #fbf2d6;
-    color: #6b5a2c;
-    font-weight: 700;
-    border-color: #e8d49a;
-  }
-  .results {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
-  }
-  .result-tile {
-    background: #fbf8ee;
-    padding: 12px;
-    border-radius: 9px;
-    border: 1px solid #ece3c6;
-  }
-  .result-tile .lbl {
-    font-size: 12px;
-    color: #8a7a55;
-    font-family: Georgia, serif;
-    font-style: italic;
-  }
-  .result-tile .val {
-    font-size: 19px;
-    font-weight: 700;
-    color: #2c2418;
-    margin-top: 2px;
-  }
-  .step {
-    padding: 10px 14px;
-    margin: 7px 0;
-    background: linear-gradient(90deg, #faf6e6 0%, #fdfaf0 100%);
-    border-left: 3px solid #c4a05a;
-    border-radius: 4px;
+    color: #5a4c30;
     font-size: 15px;
-    line-height: 1.5;
+    line-height: 1.55;
+    flex: 1;
   }
-  .conclusion {
-    background: linear-gradient(90deg, #d8eadb 0%, #eaf3eb 100%);
-    border-left: 3px solid #4a8a5c;
+  .card .cta {
+    align-self: flex-start;
+    padding: 9px 18px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 14px;
+    color: white;
   }
-  .formula-display {
-    background: #fbf6e6;
-    border: 1px solid #e8d49a;
-    padding: 14px;
-    border-radius: 10px;
+  .cta.gold {
+    background: linear-gradient(180deg, #c4a05a 0%, #a8884a 100%);
+  }
+  .cta.green {
+    background: linear-gradient(180deg, #6aaa7c 0%, #4a8a5c 100%);
+  }
+  .footer {
     text-align: center;
-    font-family: Georgia, serif;
-    font-size: 18px;
-    margin-bottom: 8px;
-    color: #2c2418;
+    margin-top: 44px;
+    font-size: 13px;
+    color: #8a7a55;
   }
-  @media (max-width: 880px) {
-    .dashboard { grid-template-columns: 1fr; }
+  .footer a {
+    color: #8a6e3a;
+    text-decoration: none;
+    border-bottom: 1px dotted #c4a05a;
+  }
+  @media (max-width: 720px) {
+    h1 { font-size: 30px; }
+    .formula { font-size: 24px; }
+    .cards { grid-template-columns: 1fr; }
   }
 </style>
 </head>
 <body>
-  <div style="display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:12px;max-width:1300px;">
-    <div>
-      <h1>Satz des Pythagoras — Herleitung über Flächen</h1>
-      <p class="subtitle">(a + b)² &nbsp;=&nbsp; 4 · (a · b)/2 &nbsp;+&nbsp; c² &nbsp;⟹&nbsp; a² + b² = c²</p>
-    </div>
-    <a href="animation.html" style="padding:10px 18px;background:linear-gradient(180deg,#c4a05a 0%,#a8884a 100%);color:white;text-decoration:none;border-radius:8px;font-weight:600;font-size:15px;box-shadow:0 2px 6px rgba(140,100,40,0.25);">▶ Animation ansehen</a>
-  </div>
+  <div class="wrap">
+    <header class="hero">
+      <h1>Satz des Pythagoras</h1>
+      <p class="lead">In jedem rechtwinkligen Dreieck gilt:</p>
+      <div class="formula"><em>a</em>² + <em>b</em>² = <em>c</em>²</div>
+      <p class="lead">Wähle, wie du den Satz erkunden möchtest.</p>
+    </header>
 
-  <div class="dashboard">
-    <div class="card">
-      <h2>Flächendarstellung</h2>
-      <svg id="svg" viewBox="0 0 560 560"></svg>
-      <div class="legend">
-        <span><span class="swatch" style="background:#e8a87c;border:1px solid #a45c2e"></span>4 rechtwinklige Dreiecke (je <i>a·b</i>/2)</span>
-        <span><span class="swatch" style="background:#85b1c9;border:1px solid #3a6480"></span>Inneres Quadrat (<i>c</i>²)</span>
-        <span><span class="swatch" style="background:white;border:2px dashed #2c2418"></span>Großes Quadrat ((a+b)²)</span>
-      </div>
-    </div>
+    <nav class="cards">
+      <a class="card" href="animation.html">
+        <div class="icon" aria-hidden="true">
+          <svg viewBox="0 0 200 140" width="100%" height="100%" style="max-width:240px;">
+            <!-- Animated preview: two squares with a moving triangle -->
+            <rect x="20" y="20" width="70" height="70" fill="#85b1c9" stroke="#3a6480" stroke-width="2" rx="2"/>
+            <text x="55" y="62" text-anchor="middle" font-family="Georgia, serif" font-size="22" font-weight="700" fill="#1a3848">c²</text>
+            <rect x="110" y="20" width="40" height="40" fill="#f0d490" stroke="#a8862e" stroke-width="2" rx="2"/>
+            <text x="130" y="46" text-anchor="middle" font-family="Georgia, serif" font-size="16" font-weight="700" fill="#5a4014">b²</text>
+            <rect x="110" y="62" width="28" height="28" fill="#d8e8b8" stroke="#5a7a2e" stroke-width="2" rx="2"/>
+            <text x="124" y="82" text-anchor="middle" font-family="Georgia, serif" font-size="13" font-weight="700" fill="#3c4c1e">a²</text>
+            <polygon points="100,110 100,125 115,125" fill="#e8a87c" stroke="#a45c2e" stroke-width="1.5">
+              <animateTransform attributeName="transform" type="translate"
+                from="0 0" to="-90 0" dur="2.4s" repeatCount="indefinite"
+                values="0 0; -90 0; -90 0; 0 0" keyTimes="0; 0.45; 0.55; 1"/>
+            </polygon>
+            <text x="100" y="135" text-anchor="middle" font-family="Georgia, serif" font-size="12" fill="#8a7a55" font-style="italic">Umlegungsbeweis</text>
+          </svg>
+        </div>
+        <h2>▶ Animation</h2>
+        <p>Bewegter Beweis durch Flächenumlegung — in 10 Schritten von der Behauptung bis zu <em>a² + b² = c²</em>. Mit Play/Pause, Tempo-Regler und Schritt-Steuerung.</p>
+        <span class="cta gold">Animation starten →</span>
+      </a>
 
-    <div class="card">
-      <h2>Werte einsetzen</h2>
-      <div class="controls">
-        <div class="field">
-          <label for="solveFor">Berechne</label>
-          <select id="solveFor">
-            <option value="c">c (Hypotenuse)</option>
-            <option value="a">a (Kathete)</option>
-            <option value="b">b (Kathete)</option>
-          </select>
+      <a class="card" href="dashboard.html">
+        <div class="icon" aria-hidden="true">
+          <svg viewBox="0 0 200 140" width="100%" height="100%" style="max-width:240px;">
+            <!-- Dashboard preview: square with inner tilted c² and 4 triangles -->
+            <rect x="40" y="15" width="110" height="110" fill="none" stroke="#2c2418" stroke-width="2" stroke-dasharray="5 3"/>
+            <polygon points="40,15 90,15 40,55" fill="#e8a87c" stroke="#a45c2e" stroke-width="1.4"/>
+            <polygon points="150,15 150,65 90,15" fill="#e8a87c" stroke="#a45c2e" stroke-width="1.4"/>
+            <polygon points="150,125 100,125 150,65" fill="#e8a87c" stroke="#a45c2e" stroke-width="1.4"/>
+            <polygon points="40,125 40,55 100,125" fill="#e8a87c" stroke="#a45c2e" stroke-width="1.4"/>
+            <polygon points="90,15 150,65 100,125 40,55" fill="#85b1c9" stroke="#3a6480" stroke-width="2"/>
+            <text x="95" y="78" text-anchor="middle" font-family="Georgia, serif" font-size="18" font-weight="700" fill="#1a3848">c²</text>
+            <text x="172" y="78" font-family="Georgia, serif" font-size="11" fill="#8a7a55">a, b, c</text>
+            <line x1="170" y1="84" x2="195" y2="84" stroke="#c4a05a" stroke-width="1"/>
+            <line x1="170" y1="92" x2="195" y2="92" stroke="#c4a05a" stroke-width="1"/>
+            <line x1="170" y1="100" x2="185" y2="100" stroke="#c4a05a" stroke-width="1"/>
+          </svg>
         </div>
-        <div class="field">
-          <label for="a"><i>a</i> =</label>
-          <input id="a" type="number" min="0" step="0.1" value="3">
-        </div>
-        <div class="field">
-          <label for="b"><i>b</i> =</label>
-          <input id="b" type="number" min="0" step="0.1" value="4">
-        </div>
-        <div class="field">
-          <label for="c"><i>c</i> =</label>
-          <input id="c" type="number" min="0" step="0.1" value="5">
-        </div>
-      </div>
+        <h2>🧮 Dashboard</h2>
+        <p>Werte für <em>a</em>, <em>b</em> oder <em>c</em> eintragen — die Flächendarstellung und die schrittweise Herleitung passen sich automatisch an. Ideal zum Rechnen und Experimentieren.</p>
+        <span class="cta green">Zum Dashboard →</span>
+      </a>
+    </nav>
 
-      <h2 style="margin-top:22px">Ergebnisse</h2>
-      <div class="results">
-        <div class="result-tile"><div class="lbl">a²</div><div class="val" id="a2"></div></div>
-        <div class="result-tile"><div class="lbl">b²</div><div class="val" id="b2"></div></div>
-        <div class="result-tile"><div class="lbl">c²</div><div class="val" id="c2"></div></div>
-        <div class="result-tile"><div class="lbl">a² + b²</div><div class="val" id="asb2"></div></div>
-        <div class="result-tile"><div class="lbl">(a+b)²</div><div class="val" id="ab2"></div></div>
-        <div class="result-tile"><div class="lbl">4 · (a·b)/2 = 2ab</div><div class="val" id="t4"></div></div>
-      </div>
-
-      <h2 style="margin-top:22px">Schritt für Schritt</h2>
-      <div class="step">① Das große Quadrat hat die Seitenlänge (<i>a</i> + <i>b</i>). Seine Fläche ist <b>(a + b)²</b>.</div>
-      <div class="step">② Es besteht aus <b>4 kongruenten rechtwinkligen Dreiecken</b> mit Katheten <i>a</i> und <i>b</i> und einem <b>inneren gedrehten Quadrat</b> mit Seitenlänge <i>c</i>.</div>
-      <div class="step">③ Flächengleichheit: <b>(a + b)² = 4 · (a·b)/2 + c²</b></div>
-      <div class="step">④ Ausmultiplizieren: <b>a² + 2ab + b² = 2ab + c²</b></div>
-      <div class="step conclusion">⑤ 2ab auf beiden Seiten subtrahieren: &nbsp;&nbsp;<b style="font-size:17px">a² + b² = c²</b> &nbsp;✓</div>
+    <div class="footer">
+      Quelltext auf <a href="https://github.com/temmchen/phytagoras">GitHub</a>
     </div>
   </div>
-
-<script>
-  const svg = document.getElementById('svg');
-  const aIn = document.getElementById('a');
-  const bIn = document.getElementById('b');
-  const cIn = document.getElementById('c');
-  const solveFor = document.getElementById('solveFor');
-
-  function fmt(n) {
-    if (!isFinite(n)) return '–';
-    const s = n.toFixed(3);
-    return s.replace(/\.?0+$/, '');
-  }
-
-  function update() {
-    let a = parseFloat(aIn.value);
-    let b = parseFloat(bIn.value);
-    let c = parseFloat(cIn.value);
-    const sf = solveFor.value;
-
-    aIn.disabled = (sf === 'a');
-    bIn.disabled = (sf === 'b');
-    cIn.disabled = (sf === 'c');
-
-    if (sf === 'c') {
-      if (isFinite(a) && isFinite(b) && a >= 0 && b >= 0) {
-        c = Math.sqrt(a*a + b*b);
-        cIn.value = fmt(c);
-      }
-    } else if (sf === 'a') {
-      if (isFinite(c) && isFinite(b)) {
-        const sq = c*c - b*b;
-        a = sq >= 0 ? Math.sqrt(sq) : NaN;
-        aIn.value = isFinite(a) ? fmt(a) : '';
-      }
-    } else {
-      if (isFinite(c) && isFinite(a)) {
-        const sq = c*c - a*a;
-        b = sq >= 0 ? Math.sqrt(sq) : NaN;
-        bIn.value = isFinite(b) ? fmt(b) : '';
-      }
-    }
-
-    a = isFinite(a) ? a : 0;
-    b = isFinite(b) ? b : 0;
-    c = isFinite(c) ? c : 0;
-
-    document.getElementById('a2').textContent  = fmt(a*a);
-    document.getElementById('b2').textContent  = fmt(b*b);
-    document.getElementById('c2').textContent  = fmt(c*c);
-    document.getElementById('asb2').textContent = fmt(a*a + b*b);
-    document.getElementById('ab2').textContent  = fmt((a+b)*(a+b));
-    document.getElementById('t4').textContent   = fmt(2*a*b);
-
-    drawSvg(a, b, c);
-  }
-
-  function drawSvg(a, b, c) {
-    const PAD = 60;
-    const SIZE = 560;
-    const inner = SIZE - 2*PAD;
-    const total = a + b;
-    if (total <= 0) { svg.innerHTML = ''; return; }
-    const scale = inner / total;
-    const ap = a * scale;
-    const bp = b * scale;
-    const x0 = PAD, y0 = PAD;
-    const x1 = PAD + total*scale, y1 = PAD + total*scale;
-
-    // Inner-square vertices (SVG coords: y grows down)
-    const P1 = [x0 + ap, y1];        // bottom edge
-    const P2 = [x1, y1 - ap];        // right edge
-    const P3 = [x1 - ap, y0];        // top edge
-    const P4 = [x0, y0 + ap];        // left edge
-
-    const triFill = '#e8a87c';
-    const triStroke = '#a45c2e';
-    const sqFill = '#85b1c9';
-    const sqStroke = '#3a6480';
-    const bigStroke = '#2c2418';
-    const lblBig = 'font-family: Georgia, serif; font-size: 19px; font-weight: 700; fill: #1a3848';
-    const lblSide = 'font-family: Georgia, serif; font-size: 17px; font-weight: 600; fill: #2c2418';
-    const lblTri  = 'font-family: Georgia, serif; font-size: 12px; fill: #5a2c14; font-weight: 600';
-
-    function poly(pts, fill, stroke, sw) {
-      return `<polygon points="${pts.map(p=>p[0]+','+p[1]).join(' ')}" fill="${fill}" stroke="${stroke}" stroke-width="${sw}" />`;
-    }
-
-    let html = '';
-    // Triangles
-    html += poly([[x0,y1], P1, P4], triFill, triStroke, 1.5);
-    html += poly([[x1,y1], P1, P2], triFill, triStroke, 1.5);
-    html += poly([[x1,y0], P2, P3], triFill, triStroke, 1.5);
-    html += poly([[x0,y0], P3, P4], triFill, triStroke, 1.5);
-    // Inner c² square
-    html += poly([P1, P2, P3, P4], sqFill, sqStroke, 2.5);
-    // Big square outline
-    html += `<rect x="${x0}" y="${y0}" width="${total*scale}" height="${total*scale}" fill="none" stroke="${bigStroke}" stroke-width="2.5" stroke-dasharray="7 5" />`;
-
-    // Inner square label (centroid)
-    const cx = (P1[0]+P2[0]+P3[0]+P4[0])/4;
-    const cy = (P1[1]+P2[1]+P3[1]+P4[1])/4;
-    html += `<text x="${cx}" y="${cy - 4}" text-anchor="middle" style="${lblBig}">c² = ${fmt(c*c)}</text>`;
-    html += `<text x="${cx}" y="${cy + 16}" text-anchor="middle" style="font-family: Georgia, serif; font-size: 14px; fill: #1a3848; font-style: italic">c = ${fmt(c)}</text>`;
-
-    // Triangle area labels
-    function centroid(p1,p2,p3) { return [(p1[0]+p2[0]+p3[0])/3, (p1[1]+p2[1]+p3[1])/3]; }
-    const triTxt = `a·b/2 = ${fmt(a*b/2)}`;
-    [centroid([x0,y1],P1,P4), centroid([x1,y1],P1,P2), centroid([x1,y0],P2,P3), centroid([x0,y0],P3,P4)].forEach(([x,y]) => {
-      html += `<text x="${x}" y="${y+4}" text-anchor="middle" style="${lblTri}">${triTxt}</text>`;
-    });
-
-    // Side labels
-    // Bottom: a (left part), b (right part)
-    html += `<text x="${x0 + ap/2}" y="${y1 + 26}" text-anchor="middle" style="${lblSide}">a = ${fmt(a)}</text>`;
-    html += `<text x="${x0 + ap + bp/2}" y="${y1 + 26}" text-anchor="middle" style="${lblSide}">b = ${fmt(b)}</text>`;
-    // Top: b (left), a (right)
-    html += `<text x="${x0 + bp/2}" y="${y0 - 16}" text-anchor="middle" style="${lblSide}">b</text>`;
-    html += `<text x="${x1 - ap/2}" y="${y0 - 16}" text-anchor="middle" style="${lblSide}">a</text>`;
-    // Left: a (top), b (bottom)
-    html += `<text x="${x0 - 14}" y="${y0 + ap/2 + 5}" text-anchor="end" style="${lblSide}">a</text>`;
-    html += `<text x="${x0 - 14}" y="${y0 + ap + bp/2 + 5}" text-anchor="end" style="${lblSide}">b</text>`;
-    // Right: b (top), a (bottom)
-    html += `<text x="${x1 + 14}" y="${y0 + bp/2 + 5}" style="${lblSide}">b</text>`;
-    html += `<text x="${x1 + 14}" y="${y0 + bp + ap/2 + 5}" style="${lblSide}">a</text>`;
-
-    // Big square label (top, centered, above)
-    html += `<text x="${(x0+x1)/2}" y="${y0 - 38}" text-anchor="middle" style="font-family: Georgia, serif; font-size: 15px; font-style: italic; fill: #6a5d44">Großes Quadrat: Seite (a+b) = ${fmt(a+b)},  Fläche = ${fmt((a+b)*(a+b))}</text>`;
-
-    // Right-angle markers in corners (small squares)
-    const m = 10;
-    html += `<rect x="${x0}" y="${y1-m}" width="${m}" height="${m}" fill="none" stroke="${triStroke}" stroke-width="1" />`;
-    html += `<rect x="${x1-m}" y="${y1-m}" width="${m}" height="${m}" fill="none" stroke="${triStroke}" stroke-width="1" />`;
-    html += `<rect x="${x1-m}" y="${y0}" width="${m}" height="${m}" fill="none" stroke="${triStroke}" stroke-width="1" />`;
-    html += `<rect x="${x0}" y="${y0}" width="${m}" height="${m}" fill="none" stroke="${triStroke}" stroke-width="1" />`;
-
-    svg.innerHTML = html;
-  }
-
-  [aIn, bIn, cIn, solveFor].forEach(el => el.addEventListener('input', update));
-  update();
-</script>
 </body>
 </html>

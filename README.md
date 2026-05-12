@@ -10,9 +10,9 @@ herleitet.
 
 | Datei | Beschreibung |
 |---|---|
-| [`index.html`](index.html) | Dashboard — Werte für `a`, `b` oder `c` eintragen, statische Flächendarstellung mit Schritt-für-Schritt-Herleitung. |
+| [`index.html`](index.html) | **Startseite** — Auswahl zwischen Animation und Dashboard. |
 | [`animation.html`](animation.html) | **Animierter Beweis** — bewegte Herleitung von `a² + b² = c²` durch Flächenumlegung. Mit Play/Pause, Schritt-vor/zurück und Tempo-Regler. |
-| [`pythagoras_dashboard.html`](pythagoras_dashboard.html) | Kopie des Dashboards (gleicher Inhalt wie `index.html`). |
+| [`dashboard.html`](dashboard.html) | **Dashboard** — Werte für `a`, `b` oder `c` eintragen, statische Flächendarstellung mit Schritt-für-Schritt-Herleitung. |
 
 ## Die Animation
 
