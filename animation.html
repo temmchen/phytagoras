@@ -124,7 +124,7 @@
   </div>
 
   <div class="stage-wrap">
-    <svg id="stage" viewBox="0 0 900 640" preserveAspectRatio="xMidYMid meet"></svg>
+    <svg id="stage" viewBox="0 0 900 720" preserveAspectRatio="xMidYMid meet"></svg>
     <div class="progress"><div class="progress-bar" id="bar"></div></div>
     <div class="caption" id="caption">Drücke <b>▶ Abspielen</b>, um die Animation zu starten.</div>
     <div class="controls">
@@ -164,7 +164,7 @@
   let A = 3, B = 4;
   let C = Math.hypot(A, B);
   const SCALE = 48;        // pixels per unit
-  const VW = 900, VH = 640;
+  const VW = 900, VH = 720;
 
   // Animation state
   const PHASES = [
@@ -289,7 +289,7 @@
     // Square on B is below (extends down by B), Square on A is left (extends left by A),
     // Square on C is built on the hypotenuse (outward).
 
-    const cx0 = VW/2, cy0 = VH/2 + 20; // center anchor
+    const cx0 = VW/2, cy0 = VH/2 + 40; // center anchor (shifted down to free a banner area at top)
     // Place right-angle vertex (call it P0) so that the whole figure is roughly centered.
     const P0 = [cx0 - (B*SCALE)/2 + A*SCALE*0.15, cy0 + (A*SCALE)/2 - B*SCALE*0.1];
     const Pb = [P0[0] + B*SCALE, P0[1]];       // along x = b axis (right)
@@ -444,14 +444,17 @@
       out += `<text x="${lx}" y="${ly}" text-anchor="middle" transform="rotate(${ang} ${lx} ${ly})" style="font-family: Georgia, serif; font-size: 19px; font-weight: 700; fill: rgba(30,60,80,${a})">c = ${fmt(C)}</text>`;
     }
 
-    // Phase 4: show the equation/numbers
+    // Phase 4: show the equation/numbers in a clean banner above the drawing
     if (phase === 4) {
       const a = easeOut(tRaw);
-      const eqY = 60;
-      out += text(VW/2, eqY, `a² + b² = c²`,
-        `font-family: Georgia, serif; font-size: 32px; fill: rgba(44,36,24,${a}); font-weight: 700`);
-      out += text(VW/2, eqY + 32, `${fmt(A*A)}  +  ${fmt(B*B)}  =  ${fmt(C*C)}`,
-        `font-family: Georgia, serif; font-size: 22px; fill: rgba(74,138,92,${a}); font-style: italic`);
+      const bannerW = 480, bannerH = 78;
+      const bannerX = VW/2 - bannerW/2;
+      const bannerY = 18;
+      out += `<rect x="${bannerX}" y="${bannerY}" width="${bannerW}" height="${bannerH}" rx="14" fill="white" fill-opacity="${0.96*a}" stroke="#c4a05a" stroke-width="${1.8*a}" />`;
+      out += text(VW/2, bannerY + 34, `a² + b² = c²`,
+        `font-family: Georgia, serif; font-size: 28px; fill: rgba(44,36,24,${a}); font-weight: 700`);
+      out += text(VW/2, bannerY + 62, `${fmt(A*A)}  +  ${fmt(B*B)}  =  ${fmt(C*C)}`,
+        `font-family: Georgia, serif; font-size: 19px; fill: rgba(74,138,92,${a}); font-style: italic`);
     }
 
     return out;

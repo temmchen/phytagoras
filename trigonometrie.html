@@ -38,9 +38,12 @@
   svg { width: 100%; height: auto; display: block; background: #fdfbf4; border-radius: 8px; }
   .readout {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(5, 1fr);
     gap: 10px;
     margin: 14px 4px 0;
+  }
+  @media (max-width: 720px) {
+    .readout { grid-template-columns: repeat(2, 1fr); }
   }
   .tile {
     background: #fbf8ee;
@@ -144,7 +147,8 @@
     <svg id="stage" viewBox="0 0 1000 520" preserveAspectRatio="xMidYMid meet"></svg>
 
     <div class="readout">
-      <div class="tile angle"><div class="lbl">Winkel α</div><div class="val" id="vAng">0°</div></div>
+      <div class="tile angle"><div class="lbl">Winkel α (Grad)</div><div class="val" id="vAng">0°</div></div>
+      <div class="tile angle"><div class="lbl">Winkel α (Bogenmaß)</div><div class="val" id="vRad">0</div></div>
       <div class="tile sin"><div class="lbl">sin α</div><div class="val" id="vSin">0.000</div></div>
       <div class="tile cos"><div class="lbl">cos α</div><div class="val" id="vCos">1.000</div></div>
       <div class="tile tan"><div class="lbl">tan α</div><div class="val" id="vTan">0.000</div></div>
@@ -183,6 +187,7 @@
   const playBtn = document.getElementById('play');
   const resetBtn = document.getElementById('reset');
   const vAng = document.getElementById('vAng');
+  const vRad = document.getElementById('vRad');
   const vSin = document.getElementById('vSin');
   const vCos = document.getElementById('vCos');
   const vTan = document.getElementById('vTan');
@@ -200,6 +205,21 @@
 
   const TAU = Math.PI * 2;
   const fmt = n => (Math.round(n * 1000) / 1000).toFixed(3);
+  function fmtRad(rad) {
+    if (Math.abs(rad) < 1e-9) return '0';
+    const piMult = rad / Math.PI;
+    const fractions = [
+      [1, 'π'], [-1, '−π'], [2, '2π'], [-2, '−2π'], [3, '3π'], [4, '4π'],
+      [1/2, 'π/2'], [-1/2, '−π/2'], [3/2, '3π/2'], [-3/2, '−3π/2'],
+      [1/3, 'π/3'], [2/3, '2π/3'], [4/3, '4π/3'], [5/3, '5π/3'],
+      [1/4, 'π/4'], [3/4, '3π/4'], [5/4, '5π/4'], [7/4, '7π/4'],
+      [1/6, 'π/6'], [5/6, '5π/6'], [7/6, '7π/6'], [11/6, '11π/6'],
+    ];
+    for (const [v, lbl] of fractions) {
+      if (Math.abs(piMult - v) < 0.0015) return lbl;
+    }
+    return (Math.round(rad * 1000) / 1000).toFixed(3);
+  }
 
   function toRad(d) { return d * Math.PI / 180; }
   function clamp(v, lo, hi) { return Math.max(lo, Math.min(hi, v)); }
@@ -386,6 +406,7 @@
 
     // Readout values
     vAng.textContent = (Math.round(angleDeg*10)/10).toFixed(1) + '°';
+    vRad.textContent = fmtRad(rad);
     vSin.textContent = fmt(s);
     vCos.textContent = fmt(c);
     vTan.textContent = isFinite(t) && Math.abs(t) < 1e6 ? fmt(t) : '∞ (n. def.)';

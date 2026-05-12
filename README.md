@@ -14,7 +14,8 @@ Interaktive Webseite mit animierten Visualisierungen für Schüler:
 | [`animation.html`](animation.html) | **Pythagoras-Animation** — bewegte Herleitung von `a² + b² = c²` durch Flächenumlegung. Mit Play/Pause, Schritt-Steuerung und Tempo-Regler. |
 | [`dashboard.html`](dashboard.html) | **Pythagoras-Dashboard** — Werte für `a`, `b` oder `c` eintragen, Flächendarstellung mit Schritt-für-Schritt-Herleitung. |
 | [`trigonometrie.html`](trigonometrie.html) | **Sinus / Kosinus / Tangens** — Einheitskreis-Animation mit gleichzeitig wachsenden Kurven. |
-| [`umkehrfunktionen.html`](umkehrfunktionen.html) | **arcsin / arccos / arctan** — vom Funktionswert zum Winkel, mit animierter Suche und Hauptwertbereich. |
+| [`umkehrfunktionen.html`](umkehrfunktionen.html) | **arcsin / arccos / arctan** — alle drei Umkehrfunktionen nebeneinander, Ergebnis in Grad UND Bogenmaß. |
+| [`winkel-umrechnen.html`](winkel-umrechnen.html) | **Winkel umrechnen & rechnen** — Grad ↔ Bogenmaß, Referenztabelle, Beispiele für Komplement, Supplement, Reduzieren. |
 
 ## Die Pythagoras-Animation
 
@@ -51,10 +52,25 @@ Winkel 30°, 45°, 60°, 90°.
 
 ## Umkehrfunktionen-Seite
 
-`umkehrfunktionen.html` zeigt mit Tabs zwischen **arcsin**, **arccos** und
-**arctan** umschaltbar: links die Suche am Einheitskreis (Wert eingeben →
-Programm findet den Winkel), rechts den Graph der Umkehrfunktion. Der
-Hauptwertbereich ist hervorgehoben.
+`umkehrfunktionen.html` zeigt **alle drei** Umkehrfunktionen **gleichzeitig**
+nebeneinander: arcsin, arccos und arctan jeweils mit eigenem Schieberegler,
+Mini-Einheitskreis (mit Hauptwertbereich), Graph der Umkehrfunktion und einer
+Ergebnis-Anzeige in **Grad UND Bogenmaß** (mit exakter π-Darstellung wo
+möglich, z. B. „π/6"). Auf schmalen Bildschirmen stapeln sich die drei Panels
+vertikal.
+
+## Winkel umrechnen
+
+`winkel-umrechnen.html` enthält:
+
+- **Interaktiver Umrechner** Grad ↔ Bogenmaß mit Einheitskreis-Darstellung
+- **Referenztabelle** der typischen Winkel (0°, 30°, 45°, 60°, 90°, 120°, 135°,
+  150°, 180°, 270°, 360°) mit Bogenmaß als π-Bruch und Dezimalwert,
+  sin/cos/tan-Werten. Klick auf eine Zeile übernimmt den Wert.
+- **Rechenbeispiele** zu Winkeln addieren, Komplement (90°−α),
+  Supplement (180°−α), Reduzieren modulo 360°, Grad→Bogenmaß und zurück
+- **Live-Rechner** für aktuellen Winkel: Komplement, Supplement,
+  Vollwinkel-Reduktion, Quadrant
 
 ## Benutzung
 
