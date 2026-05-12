@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
 <meta charset="UTF-8">
-<title>Satz des Pythagoras — Startseite</title>
+<title>Mathe-Animationen — Pythagoras & Trigonometrie</title>
 <style>
   * { box-sizing: border-box; }
   body {
@@ -13,50 +13,55 @@
     color: #1f1f1f;
     min-height: 100vh;
   }
-  .wrap {
-    max-width: 980px;
-    margin: 0 auto;
-  }
-  .hero {
-    text-align: center;
-    margin-bottom: 44px;
-  }
+  .wrap { max-width: 1100px; margin: 0 auto; }
+  .hero { text-align: center; margin-bottom: 36px; }
   h1 {
-    font-size: 40px;
-    margin: 0 0 12px;
+    font-size: 38px;
+    margin: 0 0 10px;
     color: #2c2418;
     letter-spacing: -0.01em;
-  }
-  .formula {
-    font-family: Georgia, serif;
-    font-size: 30px;
-    color: #1a3848;
-    margin: 12px 0 8px;
-    font-weight: 700;
-  }
-  .formula em {
-    font-style: italic;
-    color: #5a2c14;
   }
   .lead {
     color: #6a5d44;
     font-family: Georgia, serif;
     font-size: 18px;
     font-style: italic;
-    margin: 0 0 8px;
+    margin: 0;
   }
+
+  .section { margin-top: 32px; }
+  .section-header {
+    display: flex;
+    align-items: baseline;
+    gap: 14px;
+    margin-bottom: 14px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #e8d49a;
+  }
+  .section-header h2 {
+    font-size: 22px;
+    margin: 0;
+    color: #2c2418;
+    letter-spacing: -0.005em;
+  }
+  .section-header .sec-formula {
+    font-family: Georgia, serif;
+    font-style: italic;
+    color: #8a6e3a;
+    font-size: 17px;
+  }
+
   .cards {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 24px;
-    margin-top: 12px;
+    gap: 22px;
   }
   .card {
     background: white;
     border: 1px solid #e8e2d0;
-    border-radius: 16px;
-    padding: 28px;
-    box-shadow: 0 2px 14px rgba(60, 40, 10, 0.07);
+    border-radius: 14px;
+    padding: 22px;
+    box-shadow: 0 2px 12px rgba(60, 40, 10, 0.06);
     text-decoration: none;
     color: inherit;
     display: flex;
@@ -70,40 +75,35 @@
   }
   .card .icon {
     width: 100%;
-    height: 170px;
+    height: 140px;
     background: #fbf6e6;
     border-radius: 10px;
-    margin-bottom: 16px;
+    margin-bottom: 14px;
     display: flex;
     align-items: center;
     justify-content: center;
   }
-  .card h2 {
-    font-size: 22px;
-    margin: 0 0 8px;
-    color: #2c2418;
-  }
+  .card h3 { font-size: 19px; margin: 0 0 6px; color: #2c2418; }
   .card p {
-    margin: 0 0 14px;
+    margin: 0 0 12px;
     color: #5a4c30;
-    font-size: 15px;
+    font-size: 14px;
     line-height: 1.55;
     flex: 1;
   }
   .card .cta {
     align-self: flex-start;
-    padding: 9px 18px;
+    padding: 8px 16px;
     border-radius: 8px;
     font-weight: 600;
-    font-size: 14px;
+    font-size: 13px;
     color: white;
   }
-  .cta.gold {
-    background: linear-gradient(180deg, #c4a05a 0%, #a8884a 100%);
-  }
-  .cta.green {
-    background: linear-gradient(180deg, #6aaa7c 0%, #4a8a5c 100%);
-  }
+  .cta.gold  { background: linear-gradient(180deg, #c4a05a 0%, #a8884a 100%); }
+  .cta.green { background: linear-gradient(180deg, #6aaa7c 0%, #4a8a5c 100%); }
+  .cta.blue  { background: linear-gradient(180deg, #6a92b8 0%, #3a6480 100%); }
+  .cta.rose  { background: linear-gradient(180deg, #d97070 0%, #b04545 100%); }
+
   .footer {
     text-align: center;
     margin-top: 44px;
@@ -115,68 +115,127 @@
     text-decoration: none;
     border-bottom: 1px dotted #c4a05a;
   }
-  @media (max-width: 720px) {
-    h1 { font-size: 30px; }
-    .formula { font-size: 24px; }
+
+  @media (max-width: 760px) {
+    h1 { font-size: 28px; }
     .cards { grid-template-columns: 1fr; }
+    .section-header { flex-direction: column; gap: 4px; align-items: flex-start; }
   }
 </style>
 </head>
 <body>
   <div class="wrap">
     <header class="hero">
-      <h1>Satz des Pythagoras</h1>
-      <p class="lead">In jedem rechtwinkligen Dreieck gilt:</p>
-      <div class="formula"><em>a</em>² + <em>b</em>² = <em>c</em>²</div>
-      <p class="lead">Wähle, wie du den Satz erkunden möchtest.</p>
+      <h1>Mathe-Animationen für Schüler</h1>
+      <p class="lead">Pythagoras &amp; Trigonometrie — anschaulich, animiert, interaktiv.</p>
     </header>
 
-    <nav class="cards">
-      <a class="card" href="animation.html">
-        <div class="icon" aria-hidden="true">
-          <svg viewBox="0 0 200 140" width="100%" height="100%" style="max-width:240px;">
-            <!-- Animated preview: two squares with a moving triangle -->
-            <rect x="20" y="20" width="70" height="70" fill="#85b1c9" stroke="#3a6480" stroke-width="2" rx="2"/>
-            <text x="55" y="62" text-anchor="middle" font-family="Georgia, serif" font-size="22" font-weight="700" fill="#1a3848">c²</text>
-            <rect x="110" y="20" width="40" height="40" fill="#f0d490" stroke="#a8862e" stroke-width="2" rx="2"/>
-            <text x="130" y="46" text-anchor="middle" font-family="Georgia, serif" font-size="16" font-weight="700" fill="#5a4014">b²</text>
-            <rect x="110" y="62" width="28" height="28" fill="#d8e8b8" stroke="#5a7a2e" stroke-width="2" rx="2"/>
-            <text x="124" y="82" text-anchor="middle" font-family="Georgia, serif" font-size="13" font-weight="700" fill="#3c4c1e">a²</text>
-            <polygon points="100,110 100,125 115,125" fill="#e8a87c" stroke="#a45c2e" stroke-width="1.5">
-              <animateTransform attributeName="transform" type="translate"
-                from="0 0" to="-90 0" dur="2.4s" repeatCount="indefinite"
-                values="0 0; -90 0; -90 0; 0 0" keyTimes="0; 0.45; 0.55; 1"/>
-            </polygon>
-            <text x="100" y="135" text-anchor="middle" font-family="Georgia, serif" font-size="12" fill="#8a7a55" font-style="italic">Umlegungsbeweis</text>
-          </svg>
-        </div>
-        <h2>▶ Animation</h2>
-        <p>Bewegter Beweis durch Flächenumlegung — in 10 Schritten von der Behauptung bis zu <em>a² + b² = c²</em>. Mit Play/Pause, Tempo-Regler und Schritt-Steuerung.</p>
-        <span class="cta gold">Animation starten →</span>
-      </a>
+    <!-- Section 1: Pythagoras -->
+    <section class="section">
+      <div class="section-header">
+        <h2>Satz des Pythagoras</h2>
+        <span class="sec-formula">a² + b² = c²</span>
+      </div>
+      <div class="cards">
+        <a class="card" href="animation.html">
+          <div class="icon" aria-hidden="true">
+            <svg viewBox="0 0 200 120" width="100%" height="100%" style="max-width:240px;">
+              <rect x="20" y="14" width="80" height="92" fill="none" stroke="#2c2418" stroke-width="2" stroke-dasharray="5 3"/>
+              <polygon points="20,14 60,14 20,52" fill="#e8a87c" stroke="#a45c2e" stroke-width="1.4"/>
+              <polygon points="100,14 100,52 60,14" fill="#e8a87c" stroke="#a45c2e" stroke-width="1.4"/>
+              <polygon points="100,106 60,106 100,68" fill="#e8a87c" stroke="#a45c2e" stroke-width="1.4"/>
+              <polygon points="20,106 20,68 60,106" fill="#e8a87c" stroke="#a45c2e" stroke-width="1.4"/>
+              <polygon points="60,14 100,52 60,106 20,68" fill="#85b1c9" stroke="#3a6480" stroke-width="1.8"/>
+              <text x="60" y="65" text-anchor="middle" font-family="Georgia, serif" font-size="16" font-weight="700" fill="#1a3848">c²</text>
+              <g transform="translate(125,30)">
+                <text x="0" y="0" font-family="Georgia, serif" font-size="13" font-weight="700" fill="#2c2418">a² + b² = c²</text>
+                <line x1="0" y1="8" x2="60" y2="8" stroke="#4a8a5c" stroke-width="1.5"/>
+                <polygon points="58,4 64,8 58,12" fill="#4a8a5c"/>
+              </g>
+            </svg>
+          </div>
+          <h3>▶ Animation</h3>
+          <p>10-stufiger Beweis durch Flächenumlegung. Mit Play/Pause, Schritt-Steuerung und Tempo-Regler.</p>
+          <span class="cta gold">Animation starten →</span>
+        </a>
 
-      <a class="card" href="dashboard.html">
-        <div class="icon" aria-hidden="true">
-          <svg viewBox="0 0 200 140" width="100%" height="100%" style="max-width:240px;">
-            <!-- Dashboard preview: square with inner tilted c² and 4 triangles -->
-            <rect x="40" y="15" width="110" height="110" fill="none" stroke="#2c2418" stroke-width="2" stroke-dasharray="5 3"/>
-            <polygon points="40,15 90,15 40,55" fill="#e8a87c" stroke="#a45c2e" stroke-width="1.4"/>
-            <polygon points="150,15 150,65 90,15" fill="#e8a87c" stroke="#a45c2e" stroke-width="1.4"/>
-            <polygon points="150,125 100,125 150,65" fill="#e8a87c" stroke="#a45c2e" stroke-width="1.4"/>
-            <polygon points="40,125 40,55 100,125" fill="#e8a87c" stroke="#a45c2e" stroke-width="1.4"/>
-            <polygon points="90,15 150,65 100,125 40,55" fill="#85b1c9" stroke="#3a6480" stroke-width="2"/>
-            <text x="95" y="78" text-anchor="middle" font-family="Georgia, serif" font-size="18" font-weight="700" fill="#1a3848">c²</text>
-            <text x="172" y="78" font-family="Georgia, serif" font-size="11" fill="#8a7a55">a, b, c</text>
-            <line x1="170" y1="84" x2="195" y2="84" stroke="#c4a05a" stroke-width="1"/>
-            <line x1="170" y1="92" x2="195" y2="92" stroke="#c4a05a" stroke-width="1"/>
-            <line x1="170" y1="100" x2="185" y2="100" stroke="#c4a05a" stroke-width="1"/>
-          </svg>
-        </div>
-        <h2>🧮 Dashboard</h2>
-        <p>Werte für <em>a</em>, <em>b</em> oder <em>c</em> eintragen — die Flächendarstellung und die schrittweise Herleitung passen sich automatisch an. Ideal zum Rechnen und Experimentieren.</p>
-        <span class="cta green">Zum Dashboard →</span>
-      </a>
-    </nav>
+        <a class="card" href="dashboard.html">
+          <div class="icon" aria-hidden="true">
+            <svg viewBox="0 0 200 120" width="100%" height="100%" style="max-width:240px;">
+              <rect x="20" y="14" width="80" height="92" fill="none" stroke="#2c2418" stroke-width="2" stroke-dasharray="5 3"/>
+              <polygon points="60,14 100,52 60,106 20,68" fill="#85b1c9" stroke="#3a6480" stroke-width="2"/>
+              <polygon points="20,14 60,14 20,52" fill="#e8a87c" stroke="#a45c2e" stroke-width="1.4"/>
+              <polygon points="100,14 100,52 60,14" fill="#e8a87c" stroke="#a45c2e" stroke-width="1.4"/>
+              <polygon points="100,106 60,106 100,68" fill="#e8a87c" stroke="#a45c2e" stroke-width="1.4"/>
+              <polygon points="20,106 20,68 60,106" fill="#e8a87c" stroke="#a45c2e" stroke-width="1.4"/>
+              <g transform="translate(125,20)">
+                <rect x="0" y="0" width="60" height="14" rx="3" fill="#fbf6e6" stroke="#d4ccb4"/>
+                <text x="6" y="10" font-family="-apple-system,sans-serif" font-size="9" fill="#5a4030">a = 3</text>
+                <rect x="0" y="20" width="60" height="14" rx="3" fill="#fbf6e6" stroke="#d4ccb4"/>
+                <text x="6" y="30" font-family="-apple-system,sans-serif" font-size="9" fill="#5a4030">b = 4</text>
+                <rect x="0" y="40" width="60" height="14" rx="3" fill="#fbf2d6" stroke="#e8d49a"/>
+                <text x="6" y="50" font-family="-apple-system,sans-serif" font-size="9" font-weight="700" fill="#6b5a2c">c = 5</text>
+              </g>
+            </svg>
+          </div>
+          <h3>🧮 Dashboard</h3>
+          <p>Werte für a, b oder c eingeben — Flächendarstellung und Herleitung passen sich live an.</p>
+          <span class="cta green">Zum Dashboard →</span>
+        </a>
+      </div>
+    </section>
+
+    <!-- Section 2: Trigonometrie -->
+    <section class="section">
+      <div class="section-header">
+        <h2>Trigonometrie</h2>
+        <span class="sec-formula">sin α, cos α, tan α</span>
+      </div>
+      <div class="cards">
+        <a class="card" href="trigonometrie.html">
+          <div class="icon" aria-hidden="true">
+            <svg viewBox="0 0 200 120" width="100%" height="100%" style="max-width:240px;">
+              <!-- Unit circle preview -->
+              <circle cx="50" cy="60" r="38" fill="none" stroke="#c4a05a" stroke-width="1.4"/>
+              <line x1="10" y1="60" x2="90" y2="60" stroke="#bcb190" stroke-width="0.8"/>
+              <line x1="50" y1="20" x2="50" y2="100" stroke="#bcb190" stroke-width="0.8"/>
+              <line x1="50" y1="60" x2="76" y2="32" stroke="#b85c2e" stroke-width="1.8"/>
+              <line x1="76" y1="60" x2="76" y2="32" stroke="#c44a4a" stroke-width="2.5"/>
+              <line x1="50" y1="60" x2="76" y2="60" stroke="#3a6480" stroke-width="2.5"/>
+              <circle cx="76" cy="32" r="3" fill="#b85c2e"/>
+              <!-- Wave preview -->
+              <path d="M 110 60 Q 122 30, 134 60 T 158 60 T 182 60" fill="none" stroke="#c44a4a" stroke-width="2"/>
+              <path d="M 110 60 Q 122 90, 134 60 T 158 60 T 182 60" fill="none" stroke="#3a6480" stroke-width="2"/>
+              <line x1="105" y1="60" x2="190" y2="60" stroke="#bcb190" stroke-width="0.8"/>
+            </svg>
+          </div>
+          <h3>📐 Sinus, Kosinus, Tangens</h3>
+          <p>Einheitskreis-Animation mit gleichzeitig wachsenden sin-, cos- und tan-Kurven. Schieberegler oder automatisches Abspielen.</p>
+          <span class="cta blue">Funktionen erkunden →</span>
+        </a>
+
+        <a class="card" href="umkehrfunktionen.html">
+          <div class="icon" aria-hidden="true">
+            <svg viewBox="0 0 200 120" width="100%" height="100%" style="max-width:240px;">
+              <!-- Inverse function: input → angle -->
+              <rect x="10" y="40" width="60" height="40" rx="6" fill="#fbf6e6" stroke="#c4a05a"/>
+              <text x="40" y="58" text-anchor="middle" font-family="Georgia, serif" font-size="11" fill="#6a5d44" font-style="italic">y = 0.5</text>
+              <text x="40" y="74" text-anchor="middle" font-family="Georgia, serif" font-size="11" fill="#b85c2e" font-weight="700">Eingabe</text>
+              <line x1="72" y1="60" x2="112" y2="60" stroke="#4a8a5c" stroke-width="2"/>
+              <polygon points="108,56 116,60 108,64" fill="#4a8a5c"/>
+              <text x="92" y="54" text-anchor="middle" font-family="Georgia, serif" font-size="10" fill="#4a8a5c">arcsin</text>
+              <rect x="116" y="40" width="74" height="40" rx="6" fill="#d8eadb" stroke="#4a8a5c"/>
+              <text x="153" y="58" text-anchor="middle" font-family="Georgia, serif" font-size="11" fill="#2c2418" font-style="italic">α = 30°</text>
+              <text x="153" y="74" text-anchor="middle" font-family="Georgia, serif" font-size="11" fill="#4a8a5c" font-weight="700">Winkel</text>
+              <text x="100" y="20" text-anchor="middle" font-family="Georgia, serif" font-size="12" fill="#8a7a55" font-style="italic">Wert → Winkel</text>
+            </svg>
+          </div>
+          <h3>🔄 Umkehrfunktionen</h3>
+          <p>arcsin, arccos und arctan in einer Ansicht. Wert wählen, animierte Suche nach dem Winkel — inklusive Hauptwertbereich.</p>
+          <span class="cta rose">Umkehren →</span>
+        </a>
+      </div>
+    </section>
 
     <div class="footer">
       Quelltext auf <a href="https://github.com/temmchen/phytagoras">GitHub</a>

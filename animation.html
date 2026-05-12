@@ -124,7 +124,7 @@
   </div>
 
   <div class="stage-wrap">
-    <svg id="stage" viewBox="0 0 900 560" preserveAspectRatio="xMidYMid meet"></svg>
+    <svg id="stage" viewBox="0 0 900 640" preserveAspectRatio="xMidYMid meet"></svg>
     <div class="progress"><div class="progress-bar" id="bar"></div></div>
     <div class="caption" id="caption">Drücke <b>▶ Abspielen</b>, um die Animation zu starten.</div>
     <div class="controls">
@@ -164,7 +164,7 @@
   let A = 3, B = 4;
   let C = Math.hypot(A, B);
   const SCALE = 48;        // pixels per unit
-  const VW = 900, VH = 560;
+  const VW = 900, VH = 640;
 
   // Animation state
   const PHASES = [
@@ -647,20 +647,26 @@
     // Phase 8/9: highlight the equality (subtraction step)
     if (phase >= 8) {
       const a = phase === 8 ? easeOut(tRaw) : 1;
-      // Box under the figure with the equation
-      const eqY = y0 + S + 70;
-      out += text(VW/2, eqY,
+      const eqY1 = y0 + S + 55;        // first line baseline
+      const eqY2 = eqY1 + 52;          // second line baseline (more space between)
+      out += text(VW/2, eqY1,
         '4 Dreiecke + c²  =  4 Dreiecke + a² + b²',
         `font-family: Georgia, serif; font-size: 20px; fill: rgba(44,36,24,${a}); font-style: italic`);
-      out += text(VW/2, eqY + 32,
+      out += text(VW/2, eqY2,
         '⟹   c²  =  a² + b²',
-        `font-family: Georgia, serif; font-size: 28px; fill: rgba(74,138,92,${a}); font-weight: 700`);
+        `font-family: Georgia, serif; font-size: 30px; fill: rgba(74,138,92,${a}); font-weight: 700`);
     }
     if (phase === 9) {
       const a = easeOut(tRaw);
-      // Sparkle / final highlight: draw a glowing border around the equation
-      const eqY = y0 + S + 70;
-      out += `<rect x="${VW/2 - 200}" y="${eqY + 8}" width="400" height="40" rx="8" fill="none" stroke="#4a8a5c" stroke-width="${2.5*a}" stroke-dasharray="6 4" />`;
+      const eqY1 = y0 + S + 55;
+      const eqY2 = eqY1 + 52;
+      // Center rect around the green formula. SVG text y is baseline; for 30px
+      // Georgia font visual center sits ~10px above baseline.
+      const rectW = 460, rectH = 60;
+      const rectX = VW/2 - rectW/2;
+      const visualCenterY = eqY2 - 10;
+      const rectY = visualCenterY - rectH/2;
+      out += `<rect x="${rectX}" y="${rectY}" width="${rectW}" height="${rectH}" rx="10" fill="rgba(216,234,219,0.35)" stroke="#4a8a5c" stroke-width="${2.5*a}" stroke-dasharray="6 4" />`;
     }
 
     return out;
