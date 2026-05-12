@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<title>Winkel — Umrechnen und Rechnen</title>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    margin: 0;
+    padding: 28px;
+    background: linear-gradient(180deg, #fbf8f1 0%, #f3eede 100%);
+    color: #1f1f1f;
+    min-height: 100vh;
+  }
+  .wrap { max-width: 1100px; margin: 0 auto; }
+  h1 { font-size: 30px; margin: 0 0 6px; color: #2c2418; letter-spacing: -0.01em; }
+  .subtitle {
+    color: #6a5d44; margin: 0 0 22px; font-size: 17px;
+    font-family: Georgia, serif; font-style: italic;
+  }
+  .nav { text-align: right; margin-bottom: 8px; font-size: 14px; }
+  .nav a {
+    color: #8a6e3a; text-decoration: none;
+    border-bottom: 1px dotted #c4a05a; margin-left: 12px;
+  }
+  .nav a:hover { color: #5a4020; }
+
+  .card {
+    background: white; border: 1px solid #e8e2d0; border-radius: 14px;
+    padding: 22px; box-shadow: 0 2px 10px rgba(60, 40, 10, 0.06);
+    margin-bottom: 22px;
+  }
+  .card h2 {
+    margin: 0 0 14px; font-size: 14px;
+    color: #8a7a55; text-transform: uppercase;
+    letter-spacing: 0.1em; font-weight: 700;
+  }
+  .converter {
+    display: grid;
+    grid-template-columns: 1.1fr 1fr;
+    gap: 22px;
+  }
+  @media (max-width: 800px) {
+    .converter { grid-template-columns: 1fr; }
+  }
+  svg { width: 100%; height: auto; display: block; background: #fdfbf4; border-radius: 8px; }
+  .input-block {
+    display: flex; flex-direction: column; gap: 16px;
+    justify-content: center;
+  }
+  .field {
+    display: flex; align-items: center; gap: 12px;
+  }
+  .field label {
+    width: 110px;
+    font-weight: 600;
+    font-family: Georgia, serif;
+    font-size: 16px;
+    color: #2c2418;
+  }
+  .field input {
+    flex: 1;
+    padding: 10px 12px;
+    border: 1px solid #d4ccb4;
+    border-radius: 8px;
+    font-size: 17px;
+    font-family: 'SF Mono', Menlo, monospace;
+    background: white;
+  }
+  .field input:focus { outline: none; border-color: #c4a05a; box-shadow: 0 0 0 3px rgba(196,160,90,0.18); }
+  .field .unit {
+    width: 50px;
+    color: #8a7a55;
+    font-style: italic;
+    font-family: Georgia, serif;
+  }
+  .formula-box {
+    background: #fbf6e6;
+    border: 1px solid #e8d49a;
+    border-radius: 10px;
+    padding: 12px 14px;
+    font-family: Georgia, serif;
+    font-size: 16px;
+    color: #2c2418;
+    text-align: center;
+  }
+  .formula-box b { color: #b85c2e; }
+
+  table.ref {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 15px;
+  }
+  table.ref th, table.ref td {
+    padding: 9px 10px;
+    text-align: center;
+    border-bottom: 1px solid #ece3c6;
+    font-family: 'SF Mono', Menlo, monospace;
+  }
+  table.ref th {
+    background: #fbf6e6;
+    font-weight: 700;
+    color: #2c2418;
+    font-family: Georgia, serif;
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  table.ref td.deg { color: #b85c2e; font-weight: 700; }
+  table.ref td.rad { color: #4a8a5c; font-weight: 700; }
+  table.ref tr:hover td { background: #fbf8ee; cursor: pointer; }
+  table.ref tr.active td { background: #fdf4e3; }
+
+  .examples {
+    display: grid; gap: 14px;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  }
+  .example {
+    background: #fbf8ee;
+    border: 1px solid #ece3c6;
+    border-radius: 9px;
+    padding: 14px;
+  }
+  .example .ex-title {
+    font-weight: 700;
+    color: #2c2418;
+    margin-bottom: 8px;
+    font-family: Georgia, serif;
+    font-size: 16px;
+  }
+  .example .ex-q {
+    color: #6a5d44;
+    font-style: italic;
+    font-family: Georgia, serif;
+    margin-bottom: 8px;
+    font-size: 14px;
+  }
+  .example .ex-steps {
+    margin: 0; padding-left: 18px;
+    font-size: 14px;
+    color: #2c2418;
+  }
+  .example .ex-steps li {
+    margin: 4px 0;
+    font-family: 'SF Mono', Menlo, monospace;
+  }
+  .example .ex-answer {
+    margin-top: 10px;
+    padding: 8px 10px;
+    background: #d8eadb;
+    border-radius: 6px;
+    font-family: Georgia, serif;
+    font-weight: 700;
+    color: #2c5a2c;
+    text-align: center;
+  }
+
+  .calc-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 14px;
+    margin-top: 14px;
+  }
+  .calc-tile {
+    background: #fbf8ee;
+    border: 1px solid #ece3c6;
+    border-radius: 9px;
+    padding: 12px;
+  }
+  .calc-tile .lbl {
+    font-size: 12px; color: #8a7a55;
+    font-family: Georgia, serif; font-style: italic;
+  }
+  .calc-tile .v {
+    font-family: 'SF Mono', Menlo, monospace;
+    font-size: 18px; font-weight: 700;
+    color: #2c2418; margin-top: 2px;
+  }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="nav">
+      <a href="index.html">← Startseite</a>
+      <a href="trigonometrie.html">Sinus, Kosinus, Tangens →</a>
+    </div>
+    <h1>Winkel — Umrechnen und Rechnen</h1>
+    <p class="subtitle">Grad ↔ Bogenmaß umrechnen, mit Winkeln rechnen und an typischen Werten orientieren.</p>
+
+    <!-- Interactive converter -->
+    <div class="card">
+      <h2>Interaktiver Umrechner</h2>
+      <div class="converter">
+        <svg id="circleSvg" viewBox="0 0 420 420" preserveAspectRatio="xMidYMid meet"></svg>
+        <div class="input-block">
+          <div class="field">
+            <label for="degIn">Grad</label>
+            <input id="degIn" type="number" step="1" value="60">
+            <span class="unit">°</span>
+          </div>
+          <div class="field">
+            <label for="radIn">Bogenmaß</label>
+            <input id="radIn" type="number" step="0.01" value="1.0472">
+            <span class="unit">rad</span>
+          </div>
+          <div class="formula-box" id="fmBox">
+            <b>60°</b> &nbsp;=&nbsp; <b>π/3</b> rad &nbsp;≈&nbsp; <b>1.0472</b> rad
+          </div>
+          <div class="formula-box" style="background:#eaf3ec;border-color:#b8d4bf;font-size:14px">
+            Umrechnung: &nbsp;
+            α<sub>rad</sub> = α<sub>°</sub> · π/180 &nbsp;·&nbsp;
+            α<sub>°</sub> = α<sub>rad</sub> · 180/π
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Reference table -->
+    <div class="card">
+      <h2>Typische Winkel — Referenztabelle</h2>
+      <p style="color:#6a5d44;font-family:Georgia,serif;font-style:italic;margin:0 0 10px;font-size:14px;">Klick auf eine Zeile, um den Winkel im Umrechner darzustellen.</p>
+      <table class="ref" id="refTable">
+        <thead>
+          <tr><th>Grad</th><th>Bogenmaß (exakt)</th><th>Bogenmaß (dezimal)</th><th>sin α</th><th>cos α</th><th>tan α</th></tr>
+        </thead>
+        <tbody id="refBody"></tbody>
+      </table>
+    </div>
+
+    <!-- Calculation examples -->
+    <div class="card">
+      <h2>Rechnen mit Winkeln — Beispiele</h2>
+      <div class="examples">
+
+        <div class="example">
+          <div class="ex-title">① Winkel addieren</div>
+          <div class="ex-q">Wie groß ist die Summe von α = 75° und β = 50°?</div>
+          <ol class="ex-steps">
+            <li>α + β = 75° + 50°</li>
+            <li>= 125°</li>
+          </ol>
+          <div class="ex-answer">α + β = 125°</div>
+        </div>
+
+        <div class="example">
+          <div class="ex-title">② Komplementwinkel (zu 90°)</div>
+          <div class="ex-q">Wie heißt der Komplementwinkel von α = 32°?</div>
+          <ol class="ex-steps">
+            <li>β = 90° − α</li>
+            <li>β = 90° − 32°</li>
+            <li>= 58°</li>
+          </ol>
+          <div class="ex-answer">β = 58°</div>
+        </div>
+
+        <div class="example">
+          <div class="ex-title">③ Supplementwinkel (zu 180°)</div>
+          <div class="ex-q">Wie heißt der Supplementwinkel von α = 110°?</div>
+          <ol class="ex-steps">
+            <li>β = 180° − α</li>
+            <li>β = 180° − 110°</li>
+            <li>= 70°</li>
+          </ol>
+          <div class="ex-answer">β = 70°</div>
+        </div>
+
+        <div class="example">
+          <div class="ex-title">④ Vollwinkel reduzieren (mod 360°)</div>
+          <div class="ex-q">Auf welchen Winkel im 1. Umlauf wird 850° reduziert?</div>
+          <ol class="ex-steps">
+            <li>850° − 360° = 490°</li>
+            <li>490° − 360° = 130°</li>
+          </ol>
+          <div class="ex-answer">850° entspricht 130°</div>
+        </div>
+
+        <div class="example">
+          <div class="ex-title">⑤ Grad → Bogenmaß</div>
+          <div class="ex-q">Wandle 135° in Bogenmaß um.</div>
+          <ol class="ex-steps">
+            <li>α<sub>rad</sub> = 135° · π/180</li>
+            <li>= 135π/180</li>
+            <li>= 3π/4</li>
+            <li>≈ 2.356</li>
+          </ol>
+          <div class="ex-answer">135° = 3π/4 ≈ 2.356 rad</div>
+        </div>
+
+        <div class="example">
+          <div class="ex-title">⑥ Bogenmaß → Grad</div>
+          <div class="ex-q">Wandle 5π/6 rad in Grad um.</div>
+          <ol class="ex-steps">
+            <li>α<sub>°</sub> = (5π/6) · 180/π</li>
+            <li>= 5 · 180 / 6</li>
+            <li>= 900 / 6</li>
+            <li>= 150°</li>
+          </ol>
+          <div class="ex-answer">5π/6 rad = 150°</div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Live calculator -->
+    <div class="card">
+      <h2>Rechner: aktueller Winkel — Komplement, Supplement, reduziert</h2>
+      <p style="color:#6a5d44;font-family:Georgia,serif;font-style:italic;margin:0 0 6px;font-size:14px;">Berechnet automatisch aus dem Wert oben im Umrechner.</p>
+      <div class="calc-row">
+        <div class="calc-tile"><div class="lbl">Komplement (90° − α)</div><div class="v" id="cComp">—</div></div>
+        <div class="calc-tile"><div class="lbl">Supplement (180° − α)</div><div class="v" id="cSupp">—</div></div>
+        <div class="calc-tile"><div class="lbl">Vollwinkel mod 360°</div><div class="v" id="cMod">—</div></div>
+        <div class="calc-tile"><div class="lbl">Quadrant</div><div class="v" id="cQuad">—</div></div>
+      </div>
+    </div>
+
+  </div>
+
+<script>
+(() => {
+  const degIn = document.getElementById('degIn');
+  const radIn = document.getElementById('radIn');
+  const fmBox = document.getElementById('fmBox');
+  const svg = document.getElementById('circleSvg');
+  const refBody = document.getElementById('refBody');
+  const cComp = document.getElementById('cComp');
+  const cSupp = document.getElementById('cSupp');
+  const cMod = document.getElementById('cMod');
+  const cQuad = document.getElementById('cQuad');
+
+  const PI = Math.PI;
+  const toRad = d => d * PI / 180;
+  const toDeg = r => r * 180 / PI;
+  const fmt = (n, d=3) => isFinite(n) ? (Math.round(n*Math.pow(10,d))/Math.pow(10,d)).toFixed(d) : '—';
+  function fmtRadExact(rad) {
+    if (Math.abs(rad) < 1e-9) return '0';
+    const piMult = rad / PI;
+    const fractions = [
+      [1, 'π'], [-1, '−π'], [2, '2π'], [3, '3π'],
+      [1/2, 'π/2'], [-1/2, '−π/2'], [3/2, '3π/2'],
+      [1/3, 'π/3'], [2/3, '2π/3'], [4/3, '4π/3'], [5/3, '5π/3'],
+      [1/4, 'π/4'], [3/4, '3π/4'], [5/4, '5π/4'], [7/4, '7π/4'],
+      [1/6, 'π/6'], [5/6, '5π/6'], [7/6, '7π/6'], [11/6, '11π/6'],
+    ];
+    for (const [v, lbl] of fractions) {
+      if (Math.abs(piMult - v) < 0.0015) return lbl;
+    }
+    return null;
+  }
+
+  // Reference table data
+  const REF = [
+    { deg: 0,   rExact: '0',    rDec: '0',      sin: '0',        cos: '1',        tan: '0' },
+    { deg: 30,  rExact: 'π/6',  rDec: '0.524',  sin: '1/2',      cos: '√3/2',     tan: '√3/3' },
+    { deg: 45,  rExact: 'π/4',  rDec: '0.785',  sin: '√2/2',     cos: '√2/2',     tan: '1' },
+    { deg: 60,  rExact: 'π/3',  rDec: '1.047',  sin: '√3/2',     cos: '1/2',      tan: '√3' },
+    { deg: 90,  rExact: 'π/2',  rDec: '1.571',  sin: '1',        cos: '0',        tan: '— (n. def.)' },
+    { deg: 120, rExact: '2π/3', rDec: '2.094',  sin: '√3/2',     cos: '−1/2',     tan: '−√3' },
+    { deg: 135, rExact: '3π/4', rDec: '2.356',  sin: '√2/2',     cos: '−√2/2',    tan: '−1' },
+    { deg: 150, rExact: '5π/6', rDec: '2.618',  sin: '1/2',      cos: '−√3/2',    tan: '−√3/3' },
+    { deg: 180, rExact: 'π',    rDec: '3.142',  sin: '0',        cos: '−1',       tan: '0' },
+    { deg: 270, rExact: '3π/2', rDec: '4.712',  sin: '−1',       cos: '0',        tan: '— (n. def.)' },
+    { deg: 360, rExact: '2π',   rDec: '6.283',  sin: '0',        cos: '1',        tan: '0' },
+  ];
+
+  function buildTable() {
+    refBody.innerHTML = REF.map((r, i) => `
+      <tr data-deg="${r.deg}">
+        <td class="deg">${r.deg}°</td>
+        <td class="rad">${r.rExact}</td>
+        <td>${r.rDec}</td>
+        <td>${r.sin}</td>
+        <td>${r.cos}</td>
+        <td>${r.tan}</td>
+      </tr>
+    `).join('');
+    refBody.querySelectorAll('tr').forEach(row => {
+      row.addEventListener('click', () => {
+        setDeg(parseFloat(row.dataset.deg));
+      });
+    });
+  }
+
+  function renderCircle(deg) {
+    const CX = 210, CY = 210, R = 150;
+    const rad = toRad(deg);
+    const Px = CX + R * Math.cos(rad);
+    const Py = CY - R * Math.sin(rad);
+
+    let out = '';
+    // Axes
+    out += `<line x1="${CX-R-30}" y1="${CY}" x2="${CX+R+30}" y2="${CY}" stroke="#bcb190" stroke-width="1.2" />`;
+    out += `<line x1="${CX}" y1="${CY-R-30}" x2="${CX}" y2="${CY+R+30}" stroke="#bcb190" stroke-width="1.2" />`;
+    // Quadrant labels
+    out += `<text x="${CX+R-8}" y="${CY-R+14}" text-anchor="end" font-family="Georgia, serif" font-size="11" fill="#bcb190" font-style="italic">Q1</text>`;
+    out += `<text x="${CX-R+8}" y="${CY-R+14}" font-family="Georgia, serif" font-size="11" fill="#bcb190" font-style="italic">Q2</text>`;
+    out += `<text x="${CX-R+8}" y="${CY+R-4}" font-family="Georgia, serif" font-size="11" fill="#bcb190" font-style="italic">Q3</text>`;
+    out += `<text x="${CX+R-8}" y="${CY+R-4}" text-anchor="end" font-family="Georgia, serif" font-size="11" fill="#bcb190" font-style="italic">Q4</text>`;
+    // Tick markers at common angles
+    [0, 30, 45, 60, 90, 120, 135, 150, 180, 210, 225, 240, 270, 300, 315, 330].forEach(d => {
+      const r = toRad(d);
+      const x1 = CX + (R - 6) * Math.cos(r);
+      const y1 = CY - (R - 6) * Math.sin(r);
+      const x2 = CX + R * Math.cos(r);
+      const y2 = CY - R * Math.sin(r);
+      out += `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="#c4a05a" stroke-width="${d%90===0?1.5:0.8}" />`;
+    });
+    // Circle
+    out += `<circle cx="${CX}" cy="${CY}" r="${R}" fill="none" stroke="#c4a05a" stroke-width="1.8" />`;
+    // Cardinal labels
+    out += `<text x="${CX+R+14}" y="${CY+4}" font-family="Georgia, serif" font-size="13" fill="#8a7a55">0°</text>`;
+    out += `<text x="${CX+R+14}" y="${CY+18}" font-family="Georgia, serif" font-size="11" fill="#5a7a2e" font-style="italic">0</text>`;
+    out += `<text x="${CX-8}" y="${CY-R-14}" text-anchor="end" font-family="Georgia, serif" font-size="13" fill="#8a7a55">90°</text>`;
+    out += `<text x="${CX-8}" y="${CY-R-2}" text-anchor="end" font-family="Georgia, serif" font-size="11" fill="#5a7a2e" font-style="italic">π/2</text>`;
+    out += `<text x="${CX-R-14}" y="${CY+4}" text-anchor="end" font-family="Georgia, serif" font-size="13" fill="#8a7a55">180°</text>`;
+    out += `<text x="${CX-R-14}" y="${CY+18}" text-anchor="end" font-family="Georgia, serif" font-size="11" fill="#5a7a2e" font-style="italic">π</text>`;
+    out += `<text x="${CX-8}" y="${CY+R+22}" text-anchor="end" font-family="Georgia, serif" font-size="13" fill="#8a7a55">270°</text>`;
+    out += `<text x="${CX-8}" y="${CY+R+36}" text-anchor="end" font-family="Georgia, serif" font-size="11" fill="#5a7a2e" font-style="italic">3π/2</text>`;
+
+    // Arc for current angle
+    const dispDeg = ((deg % 360) + 360) % 360;
+    if (dispDeg > 0.5) {
+      const arcR = 28;
+      const r2 = toRad(dispDeg);
+      const largeArc = dispDeg > 180 ? 1 : 0;
+      const ex = CX + arcR * Math.cos(r2);
+      const ey = CY - arcR * Math.sin(r2);
+      out += `<path d="M ${CX+arcR} ${CY} A ${arcR} ${arcR} 0 ${largeArc} 0 ${ex} ${ey}" fill="#fde6c8" fill-opacity="0.6" stroke="#b85c2e" stroke-width="1.6" />`;
+      out += `<text x="${CX + (arcR+16)*Math.cos(toRad(dispDeg/2))}" y="${CY - (arcR+16)*Math.sin(toRad(dispDeg/2)) + 5}" text-anchor="middle" font-family="Georgia, serif" font-size="14" fill="#b85c2e" font-weight="700">α</text>`;
+    }
+    // Radius
+    out += `<line x1="${CX}" y1="${CY}" x2="${Px}" y2="${Py}" stroke="#b85c2e" stroke-width="2.5" />`;
+    // Point
+    out += `<circle cx="${Px}" cy="${Py}" r="7" fill="#b85c2e" stroke="white" stroke-width="2" />`;
+    // Center
+    out += `<circle cx="${CX}" cy="${CY}" r="3" fill="#2c2418" />`;
+    // Display deg + rad below
+    const radVal = toRad(deg);
+    const radExact = fmtRadExact(radVal);
+    out += `<text x="${CX}" y="395" text-anchor="middle" font-family="Georgia, serif" font-size="15" fill="#2c2418" font-weight="700">α = ${fmt(deg,1)}° = ${radExact ? radExact + ' rad' : fmt(radVal,4) + ' rad'}</text>`;
+
+    svg.innerHTML = out;
+  }
+
+  function updateAux(deg) {
+    const dispDeg = ((deg % 360) + 360) % 360;
+    cComp.textContent = (90 - deg).toFixed(1) + '°';
+    cSupp.textContent = (180 - deg).toFixed(1) + '°';
+    cMod.textContent = dispDeg.toFixed(1) + '°';
+    let q;
+    if (dispDeg === 0 || dispDeg === 360) q = 'Achse 0°';
+    else if (dispDeg < 90) q = 'Q1 (alle +)';
+    else if (dispDeg === 90) q = 'Achse 90°';
+    else if (dispDeg < 180) q = 'Q2 (sin +)';
+    else if (dispDeg === 180) q = 'Achse 180°';
+    else if (dispDeg < 270) q = 'Q3 (tan +)';
+    else if (dispDeg === 270) q = 'Achse 270°';
+    else q = 'Q4 (cos +)';
+    cQuad.textContent = q;
+
+    // Highlight matching reference row
+    refBody.querySelectorAll('tr').forEach(row => {
+      const rd = parseFloat(row.dataset.deg);
+      row.classList.toggle('active', Math.abs(rd - dispDeg) < 0.01);
+    });
+  }
+
+  function setDeg(deg) {
+    deg = parseFloat(deg);
+    if (!isFinite(deg)) return;
+    degIn.value = (Math.round(deg*100)/100);
+    const rad = toRad(deg);
+    radIn.value = (Math.round(rad*10000)/10000);
+    const exact = fmtRadExact(rad);
+    fmBox.innerHTML = `<b>${fmt(deg,1)}°</b> &nbsp;=&nbsp; ${exact ? '<b>' + exact + '</b> rad &nbsp;≈&nbsp; ' : ''}<b>${fmt(rad,4)}</b> rad`;
+    renderCircle(deg);
+    updateAux(deg);
+  }
+  function setRad(rad) {
+    rad = parseFloat(rad);
+    if (!isFinite(rad)) return;
+    const deg = toDeg(rad);
+    degIn.value = (Math.round(deg*100)/100);
+    const exact = fmtRadExact(rad);
+    fmBox.innerHTML = `<b>${fmt(deg,1)}°</b> &nbsp;=&nbsp; ${exact ? '<b>' + exact + '</b> rad &nbsp;≈&nbsp; ' : ''}<b>${fmt(rad,4)}</b> rad`;
+    renderCircle(deg);
+    updateAux(deg);
+  }
+
+  degIn.addEventListener('input', () => setDeg(degIn.value));
+  radIn.addEventListener('input', () => setRad(radIn.value));
+
+  buildTable();
+  setDeg(60);
+})();
+</script>
+</body>
+</html>

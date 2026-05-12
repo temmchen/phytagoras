@@ -53,7 +53,7 @@
 
   .cards {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
     gap: 22px;
   }
   .card {
@@ -231,8 +231,33 @@
             </svg>
           </div>
           <h3>🔄 Umkehrfunktionen</h3>
-          <p>arcsin, arccos und arctan in einer Ansicht. Wert wählen, animierte Suche nach dem Winkel — inklusive Hauptwertbereich.</p>
+          <p>arcsin, arccos und arctan nebeneinander. Wert wählen, Winkel in Grad UND Bogenmaß ablesen — inklusive Hauptwertbereich.</p>
           <span class="cta rose">Umkehren →</span>
+        </a>
+
+        <a class="card" href="winkel-umrechnen.html">
+          <div class="icon" aria-hidden="true">
+            <svg viewBox="0 0 200 120" width="100%" height="100%" style="max-width:240px;">
+              <!-- Deg/rad conversion preview -->
+              <circle cx="60" cy="60" r="40" fill="none" stroke="#c4a05a" stroke-width="1.6"/>
+              <line x1="15" y1="60" x2="105" y2="60" stroke="#bcb190" stroke-width="0.8"/>
+              <line x1="60" y1="15" x2="60" y2="105" stroke="#bcb190" stroke-width="0.8"/>
+              <path d="M 100 60 A 40 40 0 0 0 80 25" fill="#fde6c8" fill-opacity="0.6" stroke="#b85c2e" stroke-width="1.5"/>
+              <line x1="60" y1="60" x2="80" y2="25" stroke="#b85c2e" stroke-width="2"/>
+              <circle cx="80" cy="25" r="4" fill="#b85c2e"/>
+              <text x="86" y="50" font-family="Georgia, serif" font-size="11" fill="#b85c2e" font-weight="700">α</text>
+              <g transform="translate(120,30)">
+                <rect x="0" y="0" width="68" height="22" rx="4" fill="#fbf6e6" stroke="#c4a05a"/>
+                <text x="34" y="14" text-anchor="middle" font-family="'SF Mono',monospace" font-size="11" fill="#b85c2e" font-weight="700">60°</text>
+                <text x="34" y="34" text-anchor="middle" font-family="Georgia, serif" font-size="10" fill="#8a7a55">↕</text>
+                <rect x="0" y="40" width="68" height="22" rx="4" fill="#eaf3ec" stroke="#4a8a5c"/>
+                <text x="34" y="54" text-anchor="middle" font-family="'SF Mono',monospace" font-size="11" fill="#4a8a5c" font-weight="700">π/3 rad</text>
+              </g>
+            </svg>
+          </div>
+          <h3>🔁 Winkel umrechnen</h3>
+          <p>Grad ↔ Bogenmaß live umrechnen. Mit Referenztabelle der typischen Winkel und Rechenbeispielen (Komplement, Supplement, Reduzieren).</p>
+          <span class="cta gold">Winkel rechnen →</span>
         </a>
       </div>
     </section>
