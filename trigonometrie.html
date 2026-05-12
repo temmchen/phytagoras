@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<title>Trigonometrie — Sinus, Kosinus, Tangens</title>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    margin: 0;
+    padding: 28px;
+    background: linear-gradient(180deg, #fbf8f1 0%, #f3eede 100%);
+    color: #1f1f1f;
+    min-height: 100vh;
+  }
+  h1 {
+    font-size: 30px;
+    margin: 0 0 6px;
+    color: #2c2418;
+    letter-spacing: -0.01em;
+  }
+  .subtitle {
+    color: #6a5d44;
+    margin: 0 0 22px;
+    font-size: 17px;
+    font-family: Georgia, serif;
+    font-style: italic;
+  }
+  .stage-wrap {
+    background: white;
+    border: 1px solid #e8e2d0;
+    border-radius: 14px;
+    padding: 18px;
+    box-shadow: 0 2px 10px rgba(60, 40, 10, 0.06);
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+  svg { width: 100%; height: auto; display: block; background: #fdfbf4; border-radius: 8px; }
+  .readout {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    margin: 14px 4px 0;
+  }
+  .tile {
+    background: #fbf8ee;
+    border: 1px solid #ece3c6;
+    border-radius: 9px;
+    padding: 10px 12px;
+  }
+  .tile .lbl {
+    font-size: 12px;
+    color: #8a7a55;
+    font-family: Georgia, serif;
+    font-style: italic;
+  }
+  .tile .val {
+    font-size: 18px;
+    font-weight: 700;
+    color: #2c2418;
+    margin-top: 2px;
+    font-family: 'SF Mono', Menlo, monospace;
+  }
+  .tile.angle .val { color: #b85c2e; }
+  .tile.sin   .val { color: #c44a4a; }
+  .tile.cos   .val { color: #3a6480; }
+  .tile.tan   .val { color: #5a7a2e; }
+  .caption {
+    margin: 14px 4px 8px;
+    font-family: Georgia, serif;
+    font-size: 17px;
+    line-height: 1.5;
+    color: #2c2418;
+    min-height: 48px;
+  }
+  .caption b { color: #1a3848; }
+  .controls {
+    display: flex; flex-wrap: wrap; gap: 12px; align-items: center;
+    padding: 6px 4px 0;
+  }
+  button {
+    padding: 10px 18px;
+    border: 1px solid #d4ccb4;
+    background: white;
+    border-radius: 8px;
+    font-size: 15px;
+    font-weight: 600;
+    color: #2c2418;
+    cursor: pointer;
+    font-family: inherit;
+  }
+  button:hover { background: #fbf6e6; border-color: #c4a05a; }
+  button.primary {
+    background: linear-gradient(180deg, #c4a05a 0%, #a8884a 100%);
+    color: white;
+    border-color: #8a6e3a;
+  }
+  .slider-row {
+    display: flex; align-items: center; gap: 10px;
+    margin: 12px 4px 0;
+    font-size: 14px; color: #6a5d44;
+  }
+  .slider-row input[type=range] { flex: 1; }
+  .nav {
+    text-align: right;
+    margin-bottom: 8px;
+    font-size: 14px;
+  }
+  .nav a {
+    color: #8a6e3a;
+    text-decoration: none;
+    border-bottom: 1px dotted #c4a05a;
+    margin-left: 12px;
+  }
+  .nav a:hover { color: #5a4020; }
+  .legend {
+    display: flex; gap: 18px; flex-wrap: wrap;
+    margin-top: 12px;
+    font-size: 14px;
+    color: #4a4030;
+    font-family: Georgia, serif;
+  }
+  .legend .sw {
+    display: inline-block;
+    width: 14px;
+    height: 4px;
+    vertical-align: middle;
+    margin-right: 6px;
+    border-radius: 2px;
+  }
+</style>
+</head>
+<body>
+  <div style="max-width:1100px;margin:0 auto;">
+    <div class="nav">
+      <a href="index.html">← Startseite</a>
+      <a href="umkehrfunktionen.html">Umkehrfunktionen →</a>
+    </div>
+    <h1>Sinus, Kosinus, Tangens — am Einheitskreis</h1>
+    <p class="subtitle">sin α, cos α und tan α werden anschaulich durch eine Drehung am Einheitskreis erzeugt.</p>
+  </div>
+
+  <div class="stage-wrap">
+    <svg id="stage" viewBox="0 0 1000 520" preserveAspectRatio="xMidYMid meet"></svg>
+
+    <div class="readout">
+      <div class="tile angle"><div class="lbl">Winkel α</div><div class="val" id="vAng">0°</div></div>
+      <div class="tile sin"><div class="lbl">sin α</div><div class="val" id="vSin">0.000</div></div>
+      <div class="tile cos"><div class="lbl">cos α</div><div class="val" id="vCos">1.000</div></div>
+      <div class="tile tan"><div class="lbl">tan α</div><div class="val" id="vTan">0.000</div></div>
+    </div>
+
+    <div class="legend">
+      <span><span class="sw" style="background:#c44a4a"></span>sin α — Gegenkathete (vertikal)</span>
+      <span><span class="sw" style="background:#3a6480"></span>cos α — Ankathete (horizontal)</span>
+      <span><span class="sw" style="background:#5a7a2e"></span>tan α — Tangentenabschnitt</span>
+    </div>
+
+    <div class="caption" id="caption">Drücke <b>▶ Abspielen</b> oder bewege den Schieberegler, um den Winkel zu verändern.</div>
+
+    <div class="slider-row">
+      <span>α</span>
+      <input id="angle" type="range" min="0" max="720" step="1" value="0">
+      <span id="angleLabel" style="width:48px;text-align:right;font-family:'SF Mono',Menlo,monospace;">0°</span>
+    </div>
+
+    <div class="controls">
+      <button class="primary" id="play">▶ Abspielen</button>
+      <button id="reset">↻ Zurücksetzen</button>
+      <button id="snap30">α = 30°</button>
+      <button id="snap45">α = 45°</button>
+      <button id="snap60">α = 60°</button>
+      <button id="snap90">α = 90°</button>
+    </div>
+  </div>
+
+<script>
+(() => {
+  const svg = document.getElementById('stage');
+  const captionEl = document.getElementById('caption');
+  const angleIn = document.getElementById('angle');
+  const angleLabel = document.getElementById('angleLabel');
+  const playBtn = document.getElementById('play');
+  const resetBtn = document.getElementById('reset');
+  const vAng = document.getElementById('vAng');
+  const vSin = document.getElementById('vSin');
+  const vCos = document.getElementById('vCos');
+  const vTan = document.getElementById('vTan');
+
+  const VW = 1000, VH = 520;
+  // Unit circle on the left
+  const CX = 220, CY = 260, R = 170;
+  // Graph area on the right
+  const GX = 460, GY = 80, GW = 510, GH = 360;
+  const G_AXIS_Y = GY + GH/2;
+
+  let angleDeg = 0;
+  let playing = false;
+  let lastTs = 0;
+
+  const TAU = Math.PI * 2;
+  const fmt = n => (Math.round(n * 1000) / 1000).toFixed(3);
+
+  function toRad(d) { return d * Math.PI / 180; }
+  function clamp(v, lo, hi) { return Math.max(lo, Math.min(hi, v)); }
+
+  function captionFor(deg) {
+    const mod = ((deg % 360) + 360) % 360;
+    if (mod === 0) return 'Bei <b>α = 0°</b> liegt der Punkt auf der x-Achse: <b>cos α = 1</b>, <b>sin α = 0</b>, <b>tan α = 0</b>.';
+    if (mod > 0 && mod < 90) return 'Im <b>1. Quadranten</b>: alle drei Funktionen sind <b>positiv</b>. Der Punkt bewegt sich nach oben rechts.';
+    if (mod === 90) return 'Bei <b>α = 90°</b>: <b>sin α = 1</b>, <b>cos α = 0</b>. Die Tangente wird unendlich groß — <b>tan α</b> ist <b>nicht definiert</b>.';
+    if (mod < 180) return 'Im <b>2. Quadranten</b>: sin α ist positiv, cos α ist <b>negativ</b>, tan α negativ.';
+    if (mod === 180) return 'Bei <b>α = 180°</b>: <b>cos α = −1</b>, <b>sin α = 0</b>, <b>tan α = 0</b>.';
+    if (mod < 270) return 'Im <b>3. Quadranten</b>: sin α und cos α sind <b>negativ</b>, tan α ist positiv (Minus mal Minus).';
+    if (mod === 270) return 'Bei <b>α = 270°</b>: <b>sin α = −1</b>, <b>cos α = 0</b>. Auch hier ist <b>tan α</b> nicht definiert.';
+    return 'Im <b>4. Quadranten</b>: sin α negativ, cos α positiv, tan α negativ.';
+  }
+
+  function render() {
+    const rad = toRad(angleDeg);
+    const s = Math.sin(rad);
+    const c = Math.cos(rad);
+    const t = Math.tan(rad);
+    // Point on unit circle (SVG y is inverted, so subtract)
+    const Px = CX + R * c;
+    const Py = CY - R * s;
+
+    let out = '';
+
+    // ===== LEFT: Unit circle =====
+    // Axes
+    out += `<line x1="${CX-R-30}" y1="${CY}" x2="${CX+R+50}" y2="${CY}" stroke="#bcb190" stroke-width="1.2" />`;
+    out += `<line x1="${CX}" y1="${CY+R+30}" x2="${CX}" y2="${CY-R-30}" stroke="#bcb190" stroke-width="1.2" />`;
+    // Axis arrows
+    out += `<polygon points="${CX+R+50},${CY} ${CX+R+44},${CY-4} ${CX+R+44},${CY+4}" fill="#bcb190" />`;
+    out += `<polygon points="${CX},${CY-R-30} ${CX-4},${CY-R-24} ${CX+4},${CY-R-24}" fill="#bcb190" />`;
+    out += `<text x="${CX+R+58}" y="${CY+4}" font-family="Georgia, serif" font-size="14" fill="#8a7a55" font-style="italic">x</text>`;
+    out += `<text x="${CX-12}" y="${CY-R-34}" font-family="Georgia, serif" font-size="14" fill="#8a7a55" font-style="italic">y</text>`;
+    // Axis tick labels
+    out += `<text x="${CX+R}" y="${CY+18}" font-family="Georgia, serif" font-size="12" fill="#8a7a55" text-anchor="middle">1</text>`;
+    out += `<text x="${CX-R-2}" y="${CY+18}" font-family="Georgia, serif" font-size="12" fill="#8a7a55" text-anchor="end">−1</text>`;
+    out += `<text x="${CX-8}" y="${CY-R+4}" font-family="Georgia, serif" font-size="12" fill="#8a7a55" text-anchor="end">1</text>`;
+    out += `<text x="${CX-8}" y="${CY+R+4}" font-family="Georgia, serif" font-size="12" fill="#8a7a55" text-anchor="end">−1</text>`;
+
+    // Unit circle
+    out += `<circle cx="${CX}" cy="${CY}" r="${R}" fill="none" stroke="#c4a05a" stroke-width="1.6" />`;
+
+    // Angle arc
+    const arcRad = 32;
+    const sweep = angleDeg >= 0 ? 1 : 0;
+    const largeArc = Math.abs(angleDeg) > 180 ? 1 : 0;
+    const arcEndX = CX + arcRad * c;
+    const arcEndY = CY - arcRad * s;
+    if (Math.abs(angleDeg) > 0.5) {
+      out += `<path d="M ${CX+arcRad} ${CY} A ${arcRad} ${arcRad} 0 ${largeArc} ${sweep===1?0:1} ${arcEndX} ${arcEndY}" fill="none" stroke="#b85c2e" stroke-width="1.8" />`;
+      out += `<text x="${CX + (arcRad+14)*Math.cos(rad/2)}" y="${CY - (arcRad+14)*Math.sin(rad/2) + 5}" text-anchor="middle" font-family="Georgia, serif" font-size="14" fill="#b85c2e" font-weight="700">α</text>`;
+    }
+
+    // Tangent line at (1,0) — vertical line x = 1
+    // tan α value is where the line from origin through P meets x=1.
+    // y on tangent line = R * tan α (but clamped to viewport)
+    const tanShown = isFinite(t) && Math.abs(t) < 4;
+    if (tanShown) {
+      const tanY = CY - R * t;
+      // Vertical tangent line at x=1
+      out += `<line x1="${CX+R}" y1="${CY-R-10}" x2="${CX+R}" y2="${CY+R+10}" stroke="#a8b89a" stroke-width="1" stroke-dasharray="3 3" />`;
+      // Extended ray from origin through P to the tangent line
+      out += `<line x1="${CX}" y1="${CY}" x2="${CX+R}" y2="${tanY}" stroke="#5a7a2e" stroke-width="1.2" stroke-dasharray="4 3" opacity="0.6" />`;
+      // The tan segment (green) on the tangent line
+      out += `<line x1="${CX+R}" y1="${CY}" x2="${CX+R}" y2="${tanY}" stroke="#5a7a2e" stroke-width="3.5" stroke-linecap="round" />`;
+      // tan label
+      const tanLblY = CY - R * t / 2;
+      out += `<text x="${CX+R+10}" y="${tanLblY + 4}" font-family="Georgia, serif" font-size="14" font-weight="700" fill="#5a7a2e">tan α</text>`;
+    }
+
+    // sin segment (vertical, red): from (Px, CY) to (Px, Py)
+    out += `<line x1="${Px}" y1="${CY}" x2="${Px}" y2="${Py}" stroke="#c44a4a" stroke-width="4" stroke-linecap="round" />`;
+    // cos segment (horizontal, blue): from (CX, CY) to (Px, CY)
+    out += `<line x1="${CX}" y1="${CY}" x2="${Px}" y2="${CY}" stroke="#3a6480" stroke-width="4" stroke-linecap="round" />`;
+    // Radius line (orange)
+    out += `<line x1="${CX}" y1="${CY}" x2="${Px}" y2="${Py}" stroke="#b85c2e" stroke-width="2" />`;
+    // Right-angle marker at (Px, CY) if angle suitable
+    if (Math.abs(s) > 0.08 && Math.abs(c) > 0.08) {
+      const ms = 8;
+      const dx = c > 0 ? -ms : ms;
+      const dy = s > 0 ? -ms : ms;
+      out += `<polyline points="${Px+dx},${CY} ${Px+dx},${CY+dy} ${Px},${CY+dy}" fill="none" stroke="#b85c2e" stroke-width="1.2" />`;
+    }
+    // Point P
+    out += `<circle cx="${Px}" cy="${Py}" r="6" fill="#b85c2e" stroke="white" stroke-width="2" />`;
+    // Labels for sin and cos values along segments
+    const sinLblX = Px + (c >= 0 ? 8 : -8);
+    out += `<text x="${sinLblX}" y="${(CY+Py)/2 + 4}" text-anchor="${c >= 0 ? 'start' : 'end'}" font-family="Georgia, serif" font-size="13" font-weight="700" fill="#c44a4a">sin α</text>`;
+    const cosLblY = CY + (s >= 0 ? 16 : -8);
+    out += `<text x="${(CX+Px)/2}" y="${cosLblY}" text-anchor="middle" font-family="Georgia, serif" font-size="13" font-weight="700" fill="#3a6480">cos α</text>`;
+
+    // ===== RIGHT: Function graphs =====
+    // x-axis represents angle in degrees, mapped to GX..GX+GW
+    // We show angle range 0..720°
+    const ANG_MIN = 0, ANG_MAX = 720;
+    const xOfDeg = d => GX + (clamp(d, ANG_MIN, ANG_MAX) - ANG_MIN) / (ANG_MAX - ANG_MIN) * GW;
+    const yOfVal = v => G_AXIS_Y - clamp(v, -1.6, 1.6) * (GH/2 - 30) / 1.5;
+
+    // Graph background
+    out += `<rect x="${GX}" y="${GY}" width="${GW}" height="${GH}" fill="#fcfaf2" stroke="#e8e2d0" stroke-width="1" rx="6" />`;
+    // x-axis
+    out += `<line x1="${GX}" y1="${G_AXIS_Y}" x2="${GX+GW}" y2="${G_AXIS_Y}" stroke="#bcb190" stroke-width="1.2" />`;
+    // y-axis
+    out += `<line x1="${GX}" y1="${GY+10}" x2="${GX}" y2="${GY+GH-10}" stroke="#bcb190" stroke-width="1.2" />`;
+    // Grid lines for integer y values
+    for (const v of [-1, -0.5, 0.5, 1]) {
+      const yy = yOfVal(v);
+      out += `<line x1="${GX}" y1="${yy}" x2="${GX+GW}" y2="${yy}" stroke="#eee3c8" stroke-width="0.8" stroke-dasharray="2 3" />`;
+      out += `<text x="${GX-4}" y="${yy+4}" text-anchor="end" font-family="Georgia, serif" font-size="11" fill="#8a7a55">${v}</text>`;
+    }
+    // x ticks at every 90°
+    for (let d = 0; d <= 720; d += 90) {
+      const xx = xOfDeg(d);
+      out += `<line x1="${xx}" y1="${G_AXIS_Y-3}" x2="${xx}" y2="${G_AXIS_Y+3}" stroke="#bcb190" stroke-width="1" />`;
+      if (d % 180 === 0) {
+        out += `<text x="${xx}" y="${G_AXIS_Y+18}" text-anchor="middle" font-family="Georgia, serif" font-size="11" fill="#8a7a55">${d}°</text>`;
+      }
+    }
+    out += `<text x="${GX+GW+10}" y="${G_AXIS_Y+4}" font-family="Georgia, serif" font-size="13" fill="#8a7a55" font-style="italic">α</text>`;
+    out += `<text x="${GX+8}" y="${GY+18}" font-family="Georgia, serif" font-size="13" fill="#8a7a55" font-style="italic">f(α)</text>`;
+
+    // Plot sin, cos, tan up to current angle
+    const STEPS = 480;
+    const maxD = clamp(angleDeg, 0, ANG_MAX);
+    function buildPath(fn, breakOnDiscontinuity) {
+      let d = '';
+      let started = false;
+      let prevY = null;
+      for (let i = 0; i <= STEPS; i++) {
+        const deg = ANG_MIN + (maxD - ANG_MIN) * i / STEPS;
+        if (deg > maxD + 0.001) break;
+        const val = fn(toRad(deg));
+        const x = xOfDeg(deg);
+        if (!isFinite(val) || Math.abs(val) > 6) {
+          started = false;
+          prevY = null;
+          continue;
+        }
+        const y = yOfVal(val);
+        if (breakOnDiscontinuity && prevY !== null && Math.abs(y - prevY) > GH * 0.6) {
+          started = false;
+        }
+        d += (started ? ' L ' : ' M ') + x.toFixed(1) + ' ' + y.toFixed(1);
+        started = true;
+        prevY = y;
+      }
+      return d;
+    }
+
+    if (angleDeg > 0) {
+      // tan (drawn first, lighter weight, with discontinuities broken)
+      const tanD = buildPath(Math.tan, true);
+      if (tanD) out += `<path d="${tanD}" fill="none" stroke="#5a7a2e" stroke-width="1.8" opacity="0.85" />`;
+      // cos
+      const cosD = buildPath(Math.cos, false);
+      if (cosD) out += `<path d="${cosD}" fill="none" stroke="#3a6480" stroke-width="2.4" />`;
+      // sin
+      const sinD = buildPath(Math.sin, false);
+      if (sinD) out += `<path d="${sinD}" fill="none" stroke="#c44a4a" stroke-width="2.4" />`;
+    }
+
+    // Current vertical indicator line at current angle
+    const curX = xOfDeg(angleDeg);
+    out += `<line x1="${curX}" y1="${GY+10}" x2="${curX}" y2="${GY+GH-10}" stroke="#b85c2e" stroke-width="1" stroke-dasharray="3 3" opacity="0.7" />`;
+    // Dots showing current value of each function
+    out += `<circle cx="${curX}" cy="${yOfVal(s)}" r="5" fill="#c44a4a" stroke="white" stroke-width="2" />`;
+    out += `<circle cx="${curX}" cy="${yOfVal(c)}" r="5" fill="#3a6480" stroke="white" stroke-width="2" />`;
+    if (isFinite(t) && Math.abs(t) < 1.55) {
+      out += `<circle cx="${curX}" cy="${yOfVal(t)}" r="5" fill="#5a7a2e" stroke="white" stroke-width="2" />`;
+    }
+
+    // Connector lines (horizontal) from unit circle to graph y-values
+    out += `<line x1="${Px}" y1="${Py}" x2="${curX}" y2="${yOfVal(s)}" stroke="#c44a4a" stroke-width="1" stroke-dasharray="2 4" opacity="0.4" />`;
+
+    // Title labels above graphs
+    out += `<text x="${GX + GW - 8}" y="${GY+18}" text-anchor="end" font-family="Georgia, serif" font-size="13" fill="#c44a4a" font-weight="700">sin α</text>`;
+    out += `<text x="${GX + GW - 8}" y="${GY+36}" text-anchor="end" font-family="Georgia, serif" font-size="13" fill="#3a6480" font-weight="700">cos α</text>`;
+    out += `<text x="${GX + GW - 8}" y="${GY+54}" text-anchor="end" font-family="Georgia, serif" font-size="13" fill="#5a7a2e" font-weight="700">tan α</text>`;
+
+    svg.innerHTML = out;
+
+    // Readout values
+    vAng.textContent = (Math.round(angleDeg*10)/10).toFixed(1) + '°';
+    vSin.textContent = fmt(s);
+    vCos.textContent = fmt(c);
+    vTan.textContent = isFinite(t) && Math.abs(t) < 1e6 ? fmt(t) : '∞ (n. def.)';
+    angleLabel.textContent = (Math.round(angleDeg)) + '°';
+    captionEl.innerHTML = captionFor(angleDeg);
+  }
+
+  function setAngle(deg) {
+    angleDeg = deg;
+    angleIn.value = deg;
+    render();
+  }
+
+  angleIn.addEventListener('input', () => {
+    pause();
+    setAngle(parseFloat(angleIn.value));
+  });
+
+  function tick(ts) {
+    if (!playing) { lastTs = 0; return; }
+    if (!lastTs) lastTs = ts;
+    const dt = (ts - lastTs) / 1000;
+    lastTs = ts;
+    angleDeg += dt * 90; // 90°/sec → full rotation in 4s
+    if (angleDeg >= 720) {
+      angleDeg = 720;
+      pause();
+    }
+    setAngle(angleDeg);
+    requestAnimationFrame(tick);
+  }
+  function play() {
+    if (angleDeg >= 720) angleDeg = 0;
+    playing = true;
+    lastTs = 0;
+    playBtn.textContent = '⏸ Pause';
+    requestAnimationFrame(tick);
+  }
+  function pause() {
+    playing = false;
+    playBtn.textContent = '▶ Abspielen';
+  }
+  playBtn.addEventListener('click', () => playing ? pause() : play());
+  resetBtn.addEventListener('click', () => { pause(); setAngle(0); });
+  document.getElementById('snap30').addEventListener('click', () => { pause(); setAngle(30); });
+  document.getElementById('snap45').addEventListener('click', () => { pause(); setAngle(45); });
+  document.getElementById('snap60').addEventListener('click', () => { pause(); setAngle(60); });
+  document.getElementById('snap90').addEventListener('click', () => { pause(); setAngle(90); });
+
+  render();
+})();
+</script>
+</body>
+</html>
