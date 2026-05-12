@@ -42,28 +42,48 @@
   }
   .panel-title {
     font-size: 22px;
-    margin: 0 0 4px;
+    margin: 0 0 10px;
     color: #2c2418;
     font-weight: 700;
     display: flex;
-    align-items: baseline;
+    align-items: center;
     gap: 10px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #f0e8d0;
   }
   .panel-title .swatch {
     display: inline-block;
     width: 16px; height: 16px;
     border-radius: 4px;
   }
+  .panel-title .auto-btn {
+    margin-left: auto;
+    padding: 5px 12px;
+    border: 1px solid #d4ccb4;
+    background: white;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #2c2418;
+    cursor: pointer;
+    font-family: inherit;
+  }
+  .panel-title .auto-btn:hover { background: #fbf6e6; border-color: #c4a05a; }
+  .panel-title .auto-btn.running {
+    background: linear-gradient(180deg, #c4a05a 0%, #a8884a 100%);
+    color: white;
+    border-color: #8a6e3a;
+  }
   .panel-formula {
     font-family: Georgia, serif;
     font-size: 15px;
     color: #6a5d44;
-    margin-bottom: 12px;
+    margin: 0 0 14px;
     font-style: italic;
   }
   .slider-row {
     display: flex; align-items: center; gap: 10px;
-    margin: 6px 0 10px;
+    margin: 6px 0 12px;
     font-size: 14px; color: #6a5d44;
   }
   .slider-row input[type=range] { flex: 1; }
@@ -249,7 +269,8 @@
     rootEl.innerHTML = `
       <h2 class="panel-title">
         <span class="swatch" style="background:${cfg.color}"></span>
-        ${cfg.titleLbl}
+        <span>${cfg.titleLbl}</span>
+        <button class="auto-btn" type="button">▶ Auto</button>
       </h2>
       <div class="panel-formula">${cfg.formula}</div>
       <div class="slider-row">
@@ -271,11 +292,16 @@
     const radOut = rootEl.querySelector('.rad');
     const svg = rootEl.querySelector('svg');
     const quick = rootEl.querySelector('.quick');
+    const autoBtn = rootEl.querySelector('.auto-btn');
 
     for (const ex of cfg.examples) {
       const b = document.createElement('button');
       b.textContent = ex.label;
-      b.addEventListener('click', () => { slider.value = ex.value; render(); });
+      b.addEventListener('click', () => {
+        if (playing) stopAuto();
+        slider.value = ex.value;
+        render();
+      });
       quick.appendChild(b);
     }
 
@@ -409,9 +435,48 @@
       svg.innerHTML = out;
     }
 
-    slider.addEventListener('input', render);
+    // ---- Auto-play: sweep the slider back and forth (period ~6 s) ----
+    let playing = false;
+    let startTs = 0;
+    let startPhase = 0;
+    const PERIOD_MS = 6000;
+    function autoTick(ts) {
+      if (!playing) return;
+      if (!startTs) startTs = ts;
+      const phase = startPhase + (ts - startTs) / PERIOD_MS * 2 * Math.PI;
+      const mid = (cfg.sliderMin + cfg.sliderMax) / 2;
+      const amp = (cfg.sliderMax - cfg.sliderMin) / 2;
+      slider.value = mid + amp * Math.sin(phase);
+      render();
+      requestAnimationFrame(autoTick);
+    }
+    function startAuto() {
+      // Sync start phase from current slider value so motion is continuous
+      const v = parseFloat(slider.value);
+      const mid = (cfg.sliderMin + cfg.sliderMax) / 2;
+      const amp = (cfg.sliderMax - cfg.sliderMin) / 2;
+      const ratio = clamp((v - mid) / amp, -1, 1);
+      startPhase = Math.asin(ratio);
+      startTs = 0;
+      playing = true;
+      autoBtn.textContent = '⏸ Pause';
+      autoBtn.classList.add('running');
+      requestAnimationFrame(autoTick);
+    }
+    function stopAuto() {
+      playing = false;
+      autoBtn.textContent = '▶ Auto';
+      autoBtn.classList.remove('running');
+    }
+    autoBtn.addEventListener('click', () => playing ? stopAuto() : startAuto());
+
+    slider.addEventListener('input', (e) => {
+      // Manual interaction stops the auto-play
+      if (playing && e.isTrusted) stopAuto();
+      render();
+    });
     render();
-    return { render };
+    return { render, startAuto, stopAuto };
   }
 
   initPanel(document.getElementById('panel-sin'), 'sin');
