@@ -429,8 +429,10 @@
     }
     if (progA > 0.8) {
       const a = clamp((progA-0.8)/0.2, 0, 1);
-      out += text(P0[0] - 14, (P0[1]+Pa[1])/2 + 6, `a = ${fmt(A)}`,
-        `font-family: Georgia, serif; font-size: 19px; font-weight: 700; fill: rgba(60,80,30,${a})`, 'end');
+      // Place the "a" label INSIDE the triangle (right of the vertical leg),
+      // mirroring how "b" is placed, so it doesn't collide with the a² square label.
+      out += text(P0[0] + 8, (P0[1]+Pa[1])/2 + 6, `a = ${fmt(A)}`,
+        `font-family: Georgia, serif; font-size: 19px; font-weight: 700; fill: rgba(60,80,30,${a})`, 'start');
     }
     if (progC > 0.8) {
       const a = clamp((progC-0.8)/0.2, 0, 1);
