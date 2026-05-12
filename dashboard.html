@@ -322,8 +322,15 @@
     // Triangle area labels
     function centroid(p1,p2,p3) { return [(p1[0]+p2[0]+p3[0])/3, (p1[1]+p2[1]+p3[1])/3]; }
     const triTxt = `a·b/2 = ${fmt(a*b/2)}`;
+    // Pull labels slightly toward the figure center. For wide triangles
+    // this keeps them inside the triangle; for thin/degenerate ones it
+    // prevents the text from sitting on top of the dashed outer border.
+    const figCx = (x0+x1)/2, figCy = (y0+y1)/2;
+    const PULL = 0.18;
     [centroid([x0,y1],P1,P4), centroid([x1,y1],P1,P2), centroid([x1,y0],P2,P3), centroid([x0,y0],P3,P4)].forEach(([x,y]) => {
-      html += `<text x="${x}" y="${y+4}" text-anchor="middle" style="${lblTri}">${triTxt}</text>`;
+      const lx = x + (figCx - x) * PULL;
+      const ly = y + (figCy - y) * PULL;
+      html += `<text x="${lx}" y="${ly+4}" text-anchor="middle" style="${lblTri}">${triTxt}</text>`;
     });
 
     // Side labels
